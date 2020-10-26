@@ -14,7 +14,7 @@
 
   !define APP_VERSION "@APP_VERSION@"
   !define APP_NAME "@APP_NAME@"
-  !define EXE_NAME "@EXE_NAME@"
+  !define EXE_NAME "@CPACK_PACKAGE_NAME@"
   !define README_FILE "README"
 
 
@@ -28,15 +28,11 @@
 ;General
 
   ;The name of the installer
-;  Name "TerritoryMgr"
-;  OutFile "Install_TerritoryMgr.exe"
-  
-  ;Name and file
   Name "@CPACK_NSIS_PACKAGE_NAME@"
   OutFile "@CPACK_TOPLEVEL_DIRECTORY@/@CPACK_OUTPUT_FILE_NAME@"
 
   ;The default installation directory
-  InstallDir $DESKTOP\TerritoryMgr
+  InstallDir $DESKTOP\${EXE_NAME}
 
   ;Request application privileges for Windows Vista
   RequestExecutionLevel user
@@ -53,7 +49,7 @@
 ;Some Paths
 !define CMAKE_CURRENT_BINARY_DIR "@CPACK_CMAKE_CURRENT_BINARY_DIR@"
 !define PROJECT_SOURCE_DIR "@CPACK_PROJECT_SOURCE_DIR@"
-!define PROJECT_BINARY_DIR "@CPACK_PROJECT_BINARY_DIR@"
+!define PROJECT_BINARY_DIR "@CPACK_PROJECT_BINARY_DIR@/.."
 
 
 ;--------------------------------
@@ -97,8 +93,6 @@ Section "Hauptprogramm" SEC01
   SetOutPath $INSTDIR
 
   ; Put file there
-  ;File ${PROJECT_BINARY_DIR}\${EXE_NAME}
-  ;File ${PROJECT_BINARY_DIR}\tasker.exe
   File ${PROJECT_BINARY_DIR}\${EXE_NAME}.exe
 
   ;Create uninstaller
