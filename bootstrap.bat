@@ -1,5 +1,5 @@
 @ECHO OFF
-
+SET PROJECT_NAME=tasketor
 REM Clear output
 REM CLS
 
@@ -139,7 +139,7 @@ SET /A "cc=elap%%100+100,elap/=100,ss=elap%%60+100,elap/=60,mm=elap%%60+100,hh=e
 
 REM Print statistics
 SET stat_file=build\build_statistics.txt
-SET out_file=build\tmgr.exe
+SET out_file=build\%PROJECT_NAME%.exe
 ECHO ----------------------- >> %stat_file%
 ECHO Date:       %date% >> %stat_file%
 ECHO Build Type: %buildtype% >> %stat_file%
