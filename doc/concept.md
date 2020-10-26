@@ -12,7 +12,7 @@ Ev-C   | 14.11.2020 | <entfällt>   | Außerplanmäßiger Grund
 
 
 Tasks | Beschreibung | Periode (Personenbindung)
-------|-----------------------------------------
+------|--------------|--------------------------
 Ta-A  | Host         | Jedes mal
 Ta-B  | Co-Host      | Jedes mal
 Ta-C  | Vorsitz      | Jedes mal
