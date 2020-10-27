@@ -4,6 +4,8 @@ Ev-A   |  9:30 -  9:45 | Täglich      | Mo, Di, Mi, Do, Fr, Sa
 Ev-B   | 19:15 - 21:00 | Wöchentlich  | Mi
 Ev-C   | 18:30 - 20:15 | Wöchentlich  | Sa
 
+: **Tabelle 1**: Beispielhafte Tabellenüberschrift
+
 
 Event  | Planmäßig  | Ersatztermin | Grund
 -------|------------|--------------|-----------------------
