@@ -4,7 +4,7 @@
 #Setup CMake to run tests
 ENABLE_TESTING()
 
-FIND_PACKAGE(Boost REQUIRED unit_test_framework)
+FIND_PACKAGE(Boost REQUIRED unit_test_framework locale)
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 
 #I like to keep test files in a separate source directory called test
