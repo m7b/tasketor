@@ -56,6 +56,13 @@ install:
   - C:\CPP\tools\msys64\usr\bin\bash -l -c "pacman -Sy --noconfirm mingw-w64-x86_64-boost 2>&1"
 #  - C:\msys64\usr\bin\bash -l -c "pacman -Sy --noconfirm mingw64/mingw-w64-x86_64-boost 2>&1"
   # end prepare for sim local env
+  
+  # Install Pandoc, doxygen, graphviz, UPX, MinGW-w64 --x86 (32bit)
+  #- cinst pandoc doxygen.install graphviz upx mingw --x86
+  - cinst pandoc doxygen.install graphviz upx mingw
+  - refreshenv
+  - set
+  
   - mkdir build
   - cd build
   - cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ..
