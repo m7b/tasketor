@@ -1,10 +1,10 @@
-### Events
+### Tabelle `tEvents`
 
-Events | Event Details | Wiederholend | Wochentag
--------|---------------|--------------|-----------------------
-Ev-A   |  9:30 -  9:45 | Täglich      | Mo, Di, Mi, Do, Fr, Sa
-Ev-B   | 19:15 - 21:00 | Wöchentlich  | Mi
-Ev-C   | 18:30 - 20:15 | Wöchentlich  | Sa
+cId | cEvent | cEventDetails | cWiederholend | cWochentage
+----|--------|---------------|---------------|-----------------------
+  0 | Ev-A   |  9:30 -  9:45 | Täglich       | Mo, Di, Mi, Do, Fr, Sa
+  1 | Ev-B   | 19:15 - 21:00 | Wöchentlich   | Mi
+  2 | Ev-C   | 18:30 - 20:15 | Wöchentlich   | Sa
 
 
 ### Ausfall-/Ersatzplan für Events
