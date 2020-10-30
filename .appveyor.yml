@@ -57,11 +57,19 @@ install:
 #  - C:\msys64\usr\bin\bash -l -c "pacman -Sy --noconfirm mingw64/mingw-w64-x86_64-boost 2>&1"
   # end prepare for sim local env
   
-  # Install Pandoc, doxygen, graphviz, UPX, MinGW-w64 --x86 (32bit)
-  #- cinst pandoc doxygen.install graphviz upx mingw --x86
-  - cinst pandoc doxygen.install graphviz upx mingw
+  # Install Pandoc, doxygen, graphviz, UPX
+  - cinst pandoc doxygen.install graphviz upx
   - refreshenv
   - set
+  
+  # Installing boost & build
+  - ps: Start-FileDownload 'https://dl.bintray.com/boostorg/release/1.70.0/source/boost_1_70_0.7z'
+  - 7z x boost_1_70_0.7z -oC:\CPP\extlibs -y
+  - cd C:\CPP\extlibs\boost_1_70_0
+  - CALL bootstrap gcc
+  #- b2 --clean-all
+  - b2 headers
+  - b2 toolset=gcc address-model=32 cxxflags=-std=gnu++17 --with-filesystem --with-date_time --with-test --with-locale
   
   - mkdir build
   - cd build
