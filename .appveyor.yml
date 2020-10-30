@@ -42,7 +42,14 @@ install:
   - set PATH=%MINGW_DIR%;%PATH%
   - C:\CPP\tools\msys64\usr\bin\bash -l -c "curl -O http://repo.msys2.org/msys/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz"
   - C:\CPP\tools\msys64\usr\bin\bash -l -c "curl -O http://repo.msys2.org/msys/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz.sig"
-  - C:\CPP\tools\msys64\usr\bin\bash -l -c "pacman-key --verify msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz.sig"
+  - C:\CPP\tools\msys64\usr\bin\bash -lc "pacman-key --init"
+  - C:\CPP\tools\msys64\usr\bin\bash -lc "pacman-key --populate msys2"
+  - C:\CPP\tools\msys64\usr\bin\bash -lc "pacman-key --verify msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz.sig"
+  - C:\CPP\tools\msys64\usr\bin\bash -lc "pacman --ask 20 -U msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz"
+  - ps: Get-Process | Where-Object {$_.path -like 'C:\CPP\tools\msys64*'} | Stop-Process
+  - C:\CPP\tools\msys64\usr\bin\bash -lc "pacman --needed --ask 20 -Syu"
+  - C:\CPP\tools\msys64\usr\bin\bash -lc "pacman --needed --ask 20 -Sy"
+  
   - C:\CPP\tools\msys64\usr\bin\bash -l -c "pacman --noconfirm -U msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz"
 #  - C:\CPP\tools\msys64\usr\bin\bash -l -c "pacman --noconfirm -S zstd"
 #  - C:\CPP\tools\msys64\usr\bin\bash -l -c "pacman -Sy --noconfirm mingw64/mingw-w64-x86_64-libmariadbclient mingw64/mingw-w64-x86_64-boost 2>&1"
