@@ -63,10 +63,10 @@ install:
   - set
   
   # Installing boost & build
-  - ps: Start-FileDownload 'https://dl.bintray.com/boostorg/release/1.70.0/source/boost_1_70_0.7z'
-  - 7z x boost_1_70_0.7z -oC:\CPP\extlibs -y
-  - cd C:\CPP\extlibs\boost_1_70_0
-  - CALL bootstrap gcc
+  - ps: Start-FileDownload 'https://dl.bintray.com/boostorg/release/1.74.0/source/boost_1_74_0.7z'
+  - 7z x boost_1_74_0.7z -oC:\CPP\extlibs -y
+  - cd C:\CPP\extlibs\boost_1_74_0
+  - CALL "bootstrap gcc"
   #- b2 --clean-all
   - b2 headers
   - b2 toolset=gcc address-model=32 cxxflags=-std=gnu++17 --with-filesystem --with-date_time --with-test --with-locale
