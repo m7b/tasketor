@@ -17,6 +17,7 @@ int main()
     C_Project test(&prj_file);
 
     test.create(&prj_file);
+    test.loadTestData();
 
     return 0;
 }
