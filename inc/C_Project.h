@@ -11,5 +11,25 @@
 
 #include "C_DbHandle.h"
 
+class C_Project : public C_DbHandle
+{
+public:
+    C_Project(const std::string *db_file);
+    ~C_Project();
+
+    void create(const std::string *db_file);
+    void load(const std::string *db_file);
+    void loadTestData(void);
+    void save(void);
+
+private:
+
+    void Create_tEvent(void);
+    void Create_tEventReplacementPlan(void);
+    void Create_tTasks(void);
+    void Create_tCommitmentPeriod(void);
+
+};
+
 
 #endif // header guard

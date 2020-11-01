@@ -12,5 +12,11 @@
 
 int main()
 {
+    std::string prj_file = "todo.db";
+
+    C_Project test(&prj_file);
+
+    test.create(&prj_file);
+
     return 0;
 }

@@ -1,35 +1,44 @@
 ### Tabelle `tEvents`
+Events
 
-cId | cEvent | cEventDetails | cWiederholend | cWochentage
+cId | cEvent | cEventDetails | cRepeat       | cWeekdays
 ----|--------|---------------|---------------|-----------------------
   0 | Ev-A   |  9:30 -  9:45 | Täglich       | Mo, Di, Mi, Do, Fr, Sa
   1 | Ev-B   | 19:15 - 21:00 | Wöchentlich   | Mi
   2 | Ev-C   | 18:30 - 20:15 | Wöchentlich   | Sa
 
 
-### Ausfall-/Ersatzplan für Events
+### Tabelle `tEventReplacementPlan`
+Ausfall-/Ersatzplan für Events
 
-Event  | Planmäßig  | Ersatztermin | Grund
--------|------------|--------------|-----------------------
-Ev-B   | 21.10.2020 | 20.10.2020   | Außerplanmäßiger Grund
-Ev-C   | 14.11.2020 | <entfällt>   | Außerplanmäßiger Grund
+cId | cEventId  | cPlan      | cReplacement | cReason
+----|-----------|------------|--------------|-----------------------
+  0 |       1   | 21.10.2020 | 20.10.2020   | Außerplanmäßiger Grund
+  1 |       2   | 14.11.2020 | <entfällt>   | Außerplanmäßiger Grund
 
 
-### Aufgaben für alle Events
+### Tabelle tTasks
+Aufgaben für alle Events
 
-Tasks | Beschreibung | Periode (Personenbindung)
-------|--------------|--------------------------
-Ta-A  | Host         | Jedes mal
-Ta-B  | Co-Host      | Jedes mal
-Ta-C  | Vorsitz      | Jedes mal
-Ta-D  | Leser        | Jedes mal
-Ta-E  | Host TP      | Jedes mal
+cId | cTask  | cDescription  | cPeriodId (Personenbindung)
+----|--------|---------------|----------------------------
+  0 | Ta-A   | Host          | Jedes mal
+  1 | Ta-B   | Co-Host       | Jedes mal
+  2 | Ta-C   | Vorsitz       | Jedes mal
+  3 | Ta-D   | Leser         | Jedes mal
+  4 | Ta-E   | Host TP       | Jedes mal
 
-Die Personenbindung einer Aufgabe können auch folgende sein:
- - täglich
- - wöchentlich
- - 2-wöchentlich
- - monatlich
+
+### Tabelle tCommitmentPeriod
+Die Personenbindung einer Aufgabe
+
+cId | cPeriod       | cDescription
+----|---------------|-------------
+  0 | Jedes mal     |
+  1 | täglich       |  
+  2 | wöchentlich   |
+  3 | 2-wöchentlich |
+  4 | monatlich     |
 
 
 ### Zuteilung der Aufgaben zu den Events

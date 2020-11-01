@@ -1,3 +1,6 @@
+#ifndef HEADER_EDD3920F7B290276
+#define HEADER_EDD3920F7B290276
+
 /****************************************************************************
  * Copyright (C) 2019 by Mark Buttig                                        *
  *                                                                          *
@@ -85,3 +88,5 @@ class C_DbHandle
 };
 
 #endif // C_DBHANDLE_H
+#endif // header guard
+
