@@ -28,6 +28,11 @@ private:
     void Create_tEventReplacementPlan(void);
     void Create_tTasks(void);
     void Create_tCommitmentPeriod(void);
+    void Create_tEventTasks(void);
+    void Create_tTaskMatrix(void);
+    void Create_tPerson(void);
+    void Create_tTaskAssign(void);
+    void Create_tPersonAbsent(void);
 
 };
 

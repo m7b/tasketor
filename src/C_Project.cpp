@@ -8,6 +8,7 @@
  **************************************************************/
 
 #include <C_Project.h>
+#include <iostream>
 
 
 C_Project::C_Project(const std::string *db_file)
@@ -25,8 +26,13 @@ void C_Project::create(const std::string *db_file)
 {
     Create_tEvent();
     Create_tEventReplacementPlan();
-    Create_tTasks();
     Create_tCommitmentPeriod();
+    Create_tTasks();
+    Create_tEventTasks();
+    Create_tTaskMatrix();
+    Create_tPerson();
+    Create_tTaskAssign();
+    Create_tPersonAbsent();
 }
 
 
@@ -51,7 +57,7 @@ void C_Project::Create_tEvent(void)
     std::string query = "";
 
     query += "CREATE TABLE IF NOT EXISTS tEvents (";
-    query += "cId           INTEGER   PRIMARY KEY AUTOINCREMENT,";
+    query += "cId           INTEGER PRIMARY KEY AUTOINCREMENT,";
     query += "cEvent        TEXT NOT NULL,";
     query += "cEventDetails TEXT,";
     query += "cRepeat       TEXT,";
@@ -59,6 +65,7 @@ void C_Project::Create_tEvent(void)
     query += ");";
 
     i = exec_db(&query);
+    std::cout << "tEvent: " << i << std::endl;
     close_db();
 }
 
@@ -69,7 +76,7 @@ void C_Project::Create_tEventReplacementPlan(void)
     std::string query = "";
 
     query += "CREATE TABLE IF NOT EXISTS tEventReplacementPlan (";
-    query += "cId          INTEGER   PRIMARY KEY AUTOINCREMENT,";
+    query += "cId          INTEGER PRIMARY KEY AUTOINCREMENT,";
     query += "cEventId     INTEGER,";
     query += "cPlan        TEXT,";
     query += "cReplacement TEXT,";
@@ -78,6 +85,7 @@ void C_Project::Create_tEventReplacementPlan(void)
     query += ");";
 
     i = exec_db(&query);
+    std::cout << "tEventReplacementPlan: " << i << std::endl;
     close_db();
 }
 
@@ -87,8 +95,8 @@ void C_Project::Create_tTasks(void)
     int i = open_db();
     std::string query = "";
 
-    query += "CREATE TABL E IF NOT EXISTS tTasks (";
-    query += "cId          INTEGER   PRIMARY KEY AUTOINCREMENT,";
+    query += "CREATE TABLE IF NOT EXISTS tTasks (";
+    query += "cId          INTEGER PRIMARY KEY AUTOINCREMENT,";
     query += "cTask        TEXT,";
     query += "cDescription TEXT,";
     query += "cPeriodId    INTEGER NOT NULL,";
@@ -96,6 +104,7 @@ void C_Project::Create_tTasks(void)
     query += ");";
 
     i = exec_db(&query);
+    std::cout << "tTasks: " << i << std::endl;
     close_db();
 }
 
@@ -106,11 +115,104 @@ void C_Project::Create_tCommitmentPeriod(void)
     std::string query = "";
 
     query += "CREATE TABLE IF NOT EXISTS tCommitmentPeriod (";
-    query += "cId          INTEGER   PRIMARY KEY AUTOINCREMENT,";
+    query += "cId          INTEGER PRIMARY KEY AUTOINCREMENT,";
     query += "cPeriod      TEXT,";
     query += "cDescription TEXT";
     query += ");";
 
     i = exec_db(&query);
+    std::cout << "tCommitmentPeriod: " << i << std::endl;
+    close_db();
+}
+
+
+void C_Project::Create_tEventTasks(void)
+{
+    int i = open_db();
+    std::string query = "";
+
+    query += "CREATE TABLE IF NOT EXISTS tEventTasks (";
+    query += "cId          INTEGER PRIMARY KEY AUTOINCREMENT,";
+    query += "cEventId     INTEGER NOT NULL,";
+    query += "cTaskId      INTEGER NOT NULL,";
+    query += "FOREIGN KEY(cEventId) REFERENCES tEvents(cId),";
+    query += "FOREIGN KEY(cTaskId)  REFERENCES tTasks(cId)";
+    query += ");";
+
+    i = exec_db(&query);
+    std::cout << "tEventTasks: " << i << std::endl;
+    close_db();
+}
+
+
+void C_Project::Create_tTaskMatrix(void)
+{
+    int i = open_db();
+    std::string query = "";
+
+    query += "CREATE TABLE IF NOT EXISTS tTaskMatrix (";
+    query += "cId          INTEGER PRIMARY KEY AUTOINCREMENT,";
+    query += "cTaskId      INTEGER NOT NULL,";
+    query += "cTaskId_atst INTEGER,";
+    query += "FOREIGN KEY(cTaskId)      REFERENCES tTasks(cId),";
+    query += "FOREIGN KEY(cTaskId_atst) REFERENCES tTasks(cId)";
+    query += ");";
+
+    i = exec_db(&query);
+    std::cout << "tTaskMatrix: " << i << std::endl;
+    close_db();
+}
+
+
+void C_Project::Create_tPerson(void)
+{
+    int i = open_db();
+    std::string query = "";
+
+    query += "CREATE TABLE IF NOT EXISTS tPerson (";
+    query += "cId          INTEGER PRIMARY KEY AUTOINCREMENT,";
+    query += "cName        TEXT NOT NULL";
+    query += ");";
+
+    i = exec_db(&query);
+    std::cout << "tPerson: " << i << std::endl;
+    close_db();
+}
+
+
+void C_Project::Create_tTaskAssign(void)
+{
+    int i = open_db();
+    std::string query = "";
+
+    query += "CREATE TABLE IF NOT EXISTS tTaskAssign (";
+    query += "cId          INTEGER PRIMARY KEY AUTOINCREMENT,";
+    query += "cPersonId    INTEGER NOT NULL,";
+    query += "cTaskId      INTEGER NOT NULL,";
+    query += "FOREIGN KEY(cPersonId) REFERENCES tPerson(cId),";
+    query += "FOREIGN KEY(cTaskId)   REFERENCES tTasks(cId)";
+    query += ");";
+
+    i = exec_db(&query);
+    std::cout << "tTaskAssign: " << i << std::endl;
+    close_db();
+}
+
+
+void C_Project::Create_tPersonAbsent(void)
+{
+    int i = open_db();
+    std::string query = "";
+
+    query += "CREATE TABLE IF NOT EXISTS tPersonAbsent (";
+    query += "cId          INTEGER PRIMARY KEY AUTOINCREMENT,";
+    query += "cPersonId    INTEGER NOT NULL,";
+    query += "cFrom        TEXT    NOT NULL,";
+    query += "cTo          TEXT,";
+    query += "FOREIGN KEY(cPersonId) REFERENCES tPerson(cId)";
+    query += ");";
+
+    i = exec_db(&query);
+    std::cout << "tPersonAbsent: " << i << std::endl;
     close_db();
 }
