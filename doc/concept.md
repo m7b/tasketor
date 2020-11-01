@@ -17,7 +17,7 @@ cId | cEventId  | cPlan      | cReplacement | cReason
   1 |       2   | 14.11.2020 | <entfällt>   | Außerplanmäßiger Grund
 
 
-### Tabelle tTasks
+### Tabelle `tTasks`
 Aufgaben für alle Events
 
 cId | cTask  | cDescription  | cPeriodId (Personenbindung)
@@ -29,7 +29,7 @@ cId | cTask  | cDescription  | cPeriodId (Personenbindung)
   4 | Ta-E   | Host TP       | Jedes mal
 
 
-### Tabelle tCommitmentPeriod
+### Tabelle `tCommitmentPeriod`
 Die Personenbindung einer Aufgabe
 
 cId | cPeriod       | cDescription
@@ -41,13 +41,26 @@ cId | cPeriod       | cDescription
   4 | monatlich     |
 
 
-### Zuteilung der Aufgaben zu den Events
+### Tabelle `tEventTasks`
+Zuteilung der Aufgaben zu den Events
 
-Event | Ta-A | Ta-B | Ta-C | Ta-D | Ta-E
-------|------|------|------|------|-----
-Ev-A  |      |      |      |      |   X
-Ev-B  |   X  |   X  |      |      |
-Ev-C  |   X  |   X  |   X  |   X  |
+cId | cEventId | Ta-A | Ta-B | Ta-C | Ta-D | Ta-E
+----|----------|------|------|------|------|-----
+  0 | Ev-A     |      |      |      |      |   X
+  1 | Ev-B     |   X  |   X  |      |      |
+  2 | Ev-C     |   X  |   X  |   X  |   X  |
+
+Evtl. bessere Darstellung
+
+cId | cEventId | cTaskId |
+----|----------|---------|
+  0 | Ev-A     | Ta-E    |
+  1 | Ev-B     | Ta-A    |
+  2 | Ev-B     | Ta-B    |
+  3 | Ev-C     | Ta-A    |
+  4 | Ev-C     | Ta-B    |
+  5 | Ev-C     | Ta-C    |
+  6 | Ev-C     | Ta-D    |
 
 
 ### Aufgabenmatrix, welche Aufgaben gleichzeizig zugewiesen werden können
