@@ -1,11 +1,11 @@
-### Tabelle `tEvents`
+### Tabelle `tEvent`
 Events
 
 | cId | cEvent | cEventDetails | cRepeat       | cWeekdays              |
 |-----|--------|---------------|---------------|------------------------|
-|   0 | Ev-A   |  9:30 -  9:45 | Täglich       | Mo, Di, Mi, Do, Fr, Sa |
-|   1 | Ev-B   | 19:15 - 21:00 | Wöchentlich   | Mi                     |
-|   2 | Ev-C   | 18:30 - 20:15 | Wöchentlich   | Sa                     |
+|   1 | Ev-A   |  9:30 -  9:45 | Täglich       | Mo, Di, Mi, Do, Fr, Sa |
+|   2 | Ev-B   | 19:15 - 21:00 | Wöchentlich   | Mi                     |
+|   3 | Ev-C   | 18:30 - 20:15 | Wöchentlich   | Sa                     |
 
 
 ### Tabelle `tEventReplacementPlan`
@@ -13,20 +13,8 @@ Ausfall-/Ersatzplan für Events
 
 | cId | cEventId  | cPlan      | cReplacement | cReason                |
 |-----|-----------|------------|--------------|------------------------|
-|   0 |       1   | 21.10.2020 | 20.10.2020   | Außerplanmäßiger Grund |
-|   1 |       2   | 14.11.2020 | <entfällt>   | Außerplanmäßiger Grund |
-
-
-### Tabelle `tTasks`
-Aufgaben für alle Events
-
-| cId | cTask  | cDescription  | cPeriodId (Personenbindung) |
-|-----|--------|---------------|-----------------------------|
-|   0 | Ta-A   | Host          | Jedes mal                   |
-|   1 | Ta-B   | Co-Host       | Jedes mal                   |
-|   2 | Ta-C   | Vorsitz       | Jedes mal                   |
-|   3 | Ta-D   | Leser         | Jedes mal                   |
-|   4 | Ta-E   | Host TP       | Jedes mal                   |
+|   1 |       1   | 21.10.2020 | 20.10.2020   | Außerplanmäßiger Grund |
+|   2 |       2   | 14.11.2020 | <entfällt>   | Außerplanmäßiger Grund |
 
 
 ### Tabelle `tCommitmentPeriod`
@@ -34,11 +22,23 @@ Die Personenbindung einer Aufgabe
 
 | cId | cPeriod       | cDescription |
 |-----|---------------|--------------|
-|   0 | Jedes mal     |              |
-|   1 | täglich       |              |
-|   2 | wöchentlich   |              |
-|   3 | 2-wöchentlich |              |
-|   4 | monatlich     |              |
+|   1 | jedes mal     |              |
+|   2 | täglich       |              |
+|   3 | wöchentlich   |              |
+|   4 | 2-wöchentlich |              |
+|   5 | monatlich     |              |
+
+
+### Tabelle `tTask`
+Aufgaben für alle Events
+
+| cId | cTask  | cDescription  | cPeriodId (Personenbindung) |
+|-----|--------|---------------|-----------------------------|
+|   1 | Ta-A   | Host          | Jedes mal                   |
+|   2 | Ta-B   | Co-Host       | Jedes mal                   |
+|   3 | Ta-C   | Vorsitz       | Jedes mal                   |
+|   4 | Ta-D   | Leser         | Jedes mal                   |
+|   5 | Ta-E   | Host TP       | Jedes mal                   |
 
 
 ### Tabelle `tEventTasks`
@@ -46,21 +46,21 @@ Zuteilung der Aufgaben zu den Events
 
 | cId | cEventId | Ta-A | Ta-B | Ta-C | Ta-D | Ta-E |
 |-----|----------|------|------|------|------|------|
-|   0 | Ev-A     |      |      |      |      |   X  |
-|   1 | Ev-B     |   X  |   X  |      |      |      |
-|   2 | Ev-C     |   X  |   X  |   X  |   X  |      |
+|   1 | Ev-A     |      |      |      |      |   X  |
+|   2 | Ev-B     |   X  |   X  |      |      |      |
+|   3 | Ev-C     |   X  |   X  |   X  |   X  |      |
 
 Evtl. bessere Darstellung
 
 | cId | cEventId | cTaskId |
 |-----|----------|---------|
-|   0 | Ev-A     | Ta-E    |
-|   1 | Ev-B     | Ta-A    |
-|   2 | Ev-B     | Ta-B    |
-|   3 | Ev-C     | Ta-A    |
-|   4 | Ev-C     | Ta-B    |
-|   5 | Ev-C     | Ta-C    |
-|   6 | Ev-C     | Ta-D    |
+|   1 | Ev-A     | Ta-E    |
+|   2 | Ev-B     | Ta-A    |
+|   3 | Ev-B     | Ta-B    |
+|   4 | Ev-C     | Ta-A    |
+|   5 | Ev-C     | Ta-B    |
+|   6 | Ev-C     | Ta-C    |
+|   7 | Ev-C     | Ta-D    |
 
 
 ### Tabelle `tTaskMatrix`
@@ -78,10 +78,10 @@ Evtl. bessere Darstellung
 
 | cId | cTaskId | cTaskId_atst |
 |-----|---------|--------------|
-|   0 | Ta-B    | Ta-C         |
-|   1 | Ta-B    | Ta-D         |
-|   2 | Ta-C    | Ta-B         |
-|   3 | Ta-D    | Ta-B         |
+|   1 | Ta-B    | Ta-C         |
+|   2 | Ta-B    | Ta-D         |
+|   3 | Ta-C    | Ta-B         |
+|   4 | Ta-D    | Ta-B         |
 
 atst = at the same time
 
@@ -91,13 +91,13 @@ Personen die zu Aufgaben eingeteilt werden können
 
 | cId | cName     |
 |-----|-----------|
-|   0 | Edgar     |
-|   1 | Eber      |
-|   2 | Braftaler |
-|   3 | Burbs     |
-|   4 | Grumml    |
-|   5 | Eufers    |
-|   6 | Siffel    |
+|   1 | Edgar     |
+|   2 | Eber      |
+|   3 | Braftaler |
+|   4 | Burbs     |
+|   5 | Grumml    |
+|   6 | Eufers    |
+|   7 | Siffel    |
 
 
 ### Tabelle `tTaskAssign`
@@ -117,36 +117,36 @@ Evtl. bessere Darstellung
 
 | cId | cPersonId | cTaskId |
 |-----|-----------|---------|
-|   0 | Edgar     | Ta-A    |
-|   1 | Edgar     | Ta-B    |
-|   2 | Edgar     | Ta-C    |
-|   3 | Edgar     | Ta-D    |
-|   4 | Eber      | Ta-B    |
-|   5 | Eber      | Ta-D    |
-|   5 | Braftaler | Ta-A    |
-|   6 | Braftaler | Ta-B    |
-|   7 | Braftaler | Ta-C    |
-|   8 | Braftaler | Ta-D    |
-|   9 | Braftaler | Ta-E    |
-|  10 | Burbs     | Ta-A    |
-|  11 | Burbs     | Ta-B    |
-|  12 | Burbs     | Ta-C    |
-|  13 | Burbs     | Ta-D    |
-|  14 | Grumml    | Ta-D    |
-|  15 | Grumml    | Ta-E    |
-|  16 | Eufers    | Ta-C    |
-|  17 | Eufers    | Ta-D    |
-|  18 | Siffel    | Ta-C    |
-|  19 | Siffel    | Ta-D    |
+|   1 | Edgar     | Ta-A    |
+|   2 | Edgar     | Ta-B    |
+|   3 | Edgar     | Ta-C    |
+|   4 | Edgar     | Ta-D    |
+|   5 | Eber      | Ta-B    |
+|   6 | Eber      | Ta-D    |
+|   7 | Braftaler | Ta-A    |
+|   8 | Braftaler | Ta-B    |
+|   9 | Braftaler | Ta-C    |
+|  10 | Braftaler | Ta-D    |
+|  11 | Braftaler | Ta-E    |
+|  12 | Burbs     | Ta-A    |
+|  13 | Burbs     | Ta-B    |
+|  14 | Burbs     | Ta-C    |
+|  15 | Burbs     | Ta-D    |
+|  16 | Grumml    | Ta-D    |
+|  17 | Grumml    | Ta-E    |
+|  18 | Eufers    | Ta-C    |
+|  19 | Eufers    | Ta-D    |
+|  20 | Siffel    | Ta-C    |
+|  21 | Siffel    | Ta-D    |
 
 
 ### Tabelle `tPersonAbsent`
 Abwesenheitsliste der Personen
 
-| cId | cPersonId | Abwesenheit von | Abwesenheit bis |
-|-----|-----------|-----------------|-----------------|
-|   0 | Edgar     | 26.10.2020      | 01.11.2020      |
-|   1 | Braftaler | 31.10.2020      |                 |
+| cId | cPersonId | cFrom      | cTo        |
+|-----|-----------|------------|------------|
+|   1 | Edgar     | 26.10.2020 | 01.11.2020 |
+|   2 | Braftaler | 31.10.2020 |            |
 
 
 ### Grober Ablauf für die Erstellung der Aufgabenliste

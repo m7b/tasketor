@@ -27,7 +27,7 @@ void C_Project::create(const std::string *db_file)
     Create_tEvent();
     Create_tEventReplacementPlan();
     Create_tCommitmentPeriod();
-    Create_tTasks();
+    Create_tTask();
     Create_tEventTasks();
     Create_tTaskMatrix();
     Create_tPerson();
@@ -66,6 +66,106 @@ void C_Project::loadTestData(void)
     query += "VALUES ";
     query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-B'), '21.10.2020', '20.10.2020', 'Auﬂerplanm‰ﬂiger Grund'),";
     query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-C'), '21.10.2020', '20.10.2020', 'Auﬂerplanm‰ﬂiger Grund');";
+
+    i = exec_db(&query);
+    std::cout << "Query: " << i << std::endl;
+
+    query = "";
+    query += "INSERT INTO tCommitmentPeriod (cPeriod, cDescription) ";
+    query += "VALUES ";
+    query += "('jedes mal',     ''),";
+    query += "('t‰glich',       ''),";
+    query += "('wˆchentlich',   ''),";
+    query += "('2-wˆchentlich', ''),";
+    query += "('monatlich',     '');";
+
+    i = exec_db(&query);
+    std::cout << "Query: " << i << std::endl;
+
+    query = "";
+    query += "INSERT INTO tTask (cTask, cDescription, cPeriodId) ";
+    query += "VALUES ";
+    query += "('Ta-A', 'Host',    (SELECT cId FROM tCommitmentPeriod WHERE cPeriod='jedes mal')),";
+    query += "('Ta-B', 'Co-Host', (SELECT cId FROM tCommitmentPeriod WHERE cPeriod='jedes mal')),";
+    query += "('Ta-C', 'Vorsitz', (SELECT cId FROM tCommitmentPeriod WHERE cPeriod='jedes mal')),";
+    query += "('Ta-D', 'Leser',   (SELECT cId FROM tCommitmentPeriod WHERE cPeriod='jedes mal')),";
+    query += "('Ta-E', 'Host TP', (SELECT cId FROM tCommitmentPeriod WHERE cPeriod='jedes mal'));";
+
+    i = exec_db(&query);
+    std::cout << "Query: " << i << std::endl;
+
+    query = "";
+    query += "INSERT INTO tEventTasks (cEventId, cTaskId) ";
+    query += "VALUES ";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-A'), (SELECT cId FROM tTask WHERE cTask='Ta-E')),";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-B'), (SELECT cId FROM tTask WHERE cTask='Ta-A')),";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-B'), (SELECT cId FROM tTask WHERE cTask='Ta-B')),";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-C'), (SELECT cId FROM tTask WHERE cTask='Ta-A')),";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-C'), (SELECT cId FROM tTask WHERE cTask='Ta-B')),";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-C'), (SELECT cId FROM tTask WHERE cTask='Ta-C')),";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-C'), (SELECT cId FROM tTask WHERE cTask='Ta-D'));";
+
+    i = exec_db(&query);
+    std::cout << "Query: " << i << std::endl;
+
+    query = "";
+    query += "INSERT INTO tTaskMatrix (cTaskId, cTaskId_atst) ";
+    query += "VALUES ";
+    query += "((SELECT cId FROM tTask WHERE cTask='Ta-B'), (SELECT cId FROM tTask WHERE cTask='Ta-C')),";
+    query += "((SELECT cId FROM tTask WHERE cTask='Ta-B'), (SELECT cId FROM tTask WHERE cTask='Ta-D')),";
+    query += "((SELECT cId FROM tTask WHERE cTask='Ta-C'), (SELECT cId FROM tTask WHERE cTask='Ta-B')),";
+    query += "((SELECT cId FROM tTask WHERE cTask='Ta-D'), (SELECT cId FROM tTask WHERE cTask='Ta-B'));";
+
+    i = exec_db(&query);
+    std::cout << "Query: " << i << std::endl;
+
+    query = "";
+    query += "INSERT INTO tPerson (cName) ";
+    query += "VALUES ";
+    query += "('Edgar'),";
+    query += "('Eber'),";
+    query += "('Braftaler'),";
+    query += "('Burbs'),";
+    query += "('Grumml'),";
+    query += "('Eufers'),";
+    query += "('Siffel');";
+
+    i = exec_db(&query);
+    std::cout << "Query: " << i << std::endl;
+
+    query = "";
+    query += "INSERT INTO tTaskAssign (cPersonId, cTaskId) ";
+    query += "VALUES ";
+    query += "((SELECT cId FROM tPerson WHERE cName='Edgar'), (SELECT cId FROM tTask WHERE cTask='Ta-A')),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Edgar'), (SELECT cId FROM tTask WHERE cTask='Ta-B')),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Edgar'), (SELECT cId FROM tTask WHERE cTask='Ta-C')),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Edgar'), (SELECT cId FROM tTask WHERE cTask='Ta-D')),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Eber'), (SELECT cId FROM tTask WHERE cTask='Ta-B')),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Eber'), (SELECT cId FROM tTask WHERE cTask='Ta-D')),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Braftaler'), (SELECT cId FROM tTask WHERE cTask='Ta-A')),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Braftaler'), (SELECT cId FROM tTask WHERE cTask='Ta-B')),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Braftaler'), (SELECT cId FROM tTask WHERE cTask='Ta-C')),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Braftaler'), (SELECT cId FROM tTask WHERE cTask='Ta-D')),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Braftaler'), (SELECT cId FROM tTask WHERE cTask='Ta-E')),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Burbs'), (SELECT cId FROM tTask WHERE cTask='Ta-A')),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Burbs'), (SELECT cId FROM tTask WHERE cTask='Ta-B')),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Burbs'), (SELECT cId FROM tTask WHERE cTask='Ta-C')),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Burbs'), (SELECT cId FROM tTask WHERE cTask='Ta-D')),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Grumml'), (SELECT cId FROM tTask WHERE cTask='Ta-D')),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Grumml'), (SELECT cId FROM tTask WHERE cTask='Ta-E')),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Eufers'), (SELECT cId FROM tTask WHERE cTask='Ta-C')),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Eufers'), (SELECT cId FROM tTask WHERE cTask='Ta-D')),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Siffel'), (SELECT cId FROM tTask WHERE cTask='Ta-C')),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Siffel'), (SELECT cId FROM tTask WHERE cTask='Ta-D'));";
+
+    i = exec_db(&query);
+    std::cout << "Query: " << i << std::endl;
+
+    query = "";
+    query += "INSERT INTO tPersonAbsent (cPersonId, cFrom, cTo) ";
+    query += "VALUES ";
+    query += "((SELECT cId FROM tPerson WHERE cName='Edgar'),     '2020-10-26', '2020-11-01'),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Braftaler'), '2020-10-31', '');";
 
     i = exec_db(&query);
     std::cout << "Query: " << i << std::endl;
@@ -118,12 +218,12 @@ void C_Project::Create_tEventReplacementPlan(void)
 }
 
 
-void C_Project::Create_tTasks(void)
+void C_Project::Create_tTask(void)
 {
     int i = open_db();
     std::string query = "";
 
-    query += "CREATE TABLE IF NOT EXISTS tTasks (";
+    query += "CREATE TABLE IF NOT EXISTS tTask (";
     query += "cId          INTEGER PRIMARY KEY AUTOINCREMENT,";
     query += "cTask        TEXT UNIQUE,";
     query += "cDescription TEXT,";
@@ -163,7 +263,7 @@ void C_Project::Create_tEventTasks(void)
     query += "cId          INTEGER PRIMARY KEY AUTOINCREMENT,";
     query += "cEventId     INTEGER NOT NULL,";
     query += "cTaskId      INTEGER NOT NULL,";
-    query += "FOREIGN KEY(cEventId) REFERENCES tEvents(cId),";
+    query += "FOREIGN KEY(cEventId) REFERENCES tEvent(cId),";
     query += "FOREIGN KEY(cTaskId)  REFERENCES tTasks(cId)";
     query += ");";
 
