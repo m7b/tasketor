@@ -260,7 +260,7 @@ void C_Project::Create_tEventTasks(void)
     query += "cEventId     INTEGER NOT NULL,";
     query += "cTaskId      INTEGER NOT NULL,";
     query += "FOREIGN KEY(cEventId) REFERENCES tEvent(cId),";
-    query += "FOREIGN KEY(cTaskId)  REFERENCES tTasks(cId)";
+    query += "FOREIGN KEY(cTaskId)  REFERENCES tTask(cId)";
     query += ");";
 
     i = exec_db(&query);
@@ -278,8 +278,8 @@ void C_Project::Create_tTaskMatrix(void)
     query += "cId          INTEGER PRIMARY KEY AUTOINCREMENT,";
     query += "cTaskId      INTEGER NOT NULL,";
     query += "cTaskId_atst INTEGER,";
-    query += "FOREIGN KEY(cTaskId)      REFERENCES tTasks(cId),";
-    query += "FOREIGN KEY(cTaskId_atst) REFERENCES tTasks(cId)";
+    query += "FOREIGN KEY(cTaskId)      REFERENCES tTask(cId),";
+    query += "FOREIGN KEY(cTaskId_atst) REFERENCES tTask(cId)";
     query += ");";
 
     i = exec_db(&query);
@@ -314,7 +314,7 @@ void C_Project::Create_tTaskAssign(void)
     query += "cPersonId    INTEGER NOT NULL,";
     query += "cTaskId      INTEGER NOT NULL,";
     query += "FOREIGN KEY(cPersonId) REFERENCES tPerson(cId),";
-    query += "FOREIGN KEY(cTaskId)   REFERENCES tTasks(cId)";
+    query += "FOREIGN KEY(cTaskId)   REFERENCES tTask(cId)";
     query += ");";
 
     i = exec_db(&query);

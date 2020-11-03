@@ -17,8 +17,8 @@ int main()
     std::string prj_file = "todo.db";
     C_Project test(&prj_file);
 
-//    test.create();
-//    test.loadTestData();
+    test.create();
+    test.loadTestData();
 
     using namespace boost::locale;
     using namespace boost::gregorian;
