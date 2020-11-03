@@ -16,8 +16,11 @@ int main()
 
     C_Project test(&prj_file);
 
-    test.create(&prj_file);
+    test.create();
     test.loadTestData();
+
+    std::string from_date = "2020-10-01";
+    std::string   to_date = "2020-10-31";
 
     return 0;
 }

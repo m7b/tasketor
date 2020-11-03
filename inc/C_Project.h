@@ -17,8 +17,8 @@ public:
     C_Project(const std::string *db_file);
     ~C_Project();
 
-    void create(const std::string *db_file);
-    void load(const std::string *db_file);
+    void create(void);
+    void load(void);
     void loadTestData(void);
     void save(void);
 

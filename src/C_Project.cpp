@@ -22,7 +22,7 @@ C_Project::~C_Project()
 }
 
 
-void C_Project::create(const std::string *db_file)
+void C_Project::create(void)
 {
     Create_tEvent();
     Create_tEventReplacementPlan();
@@ -36,27 +36,22 @@ void C_Project::create(const std::string *db_file)
 }
 
 
-void C_Project::load(const std::string *db_file)
+void C_Project::load(void)
 {
 }
 
 
 void C_Project::loadTestData(void)
 {
-//    INSERT INTO bar (description, foo_id) VALUES
-//    ( 'testing',     (SELECT id from foo WHERE type='blue') ),
-//    ( 'another row', (SELECT id from foo WHERE type='red' ) );
-
-
     int i = open_db();
 
     std::string query;
     query = "";
-    query += "INSERT INTO tEvent (cEvent, cEventDetails, cRepeat, cWeekdays) ";
+    query += "INSERT INTO tEvent (cEvent, cEventDetails, cFirstTime, cRepeat, cWeekdays) ";
     query += "VALUES ";
-    query += "('Ev-A', '9:30 - 9:45', 'Täglich', 'Mo, Di, Mi, Do, Fr, Sa'),";
-    query += "('Ev-B', '19:15 - 21:00', 'Wöchentlich', 'Mi'),";
-    query += "('Ev-C', '18:30 - 20:15', 'Wöchentlich', 'Sa');";
+    query += "('Ev-A', '9:30 - 9:45',   '2020-10-01', 'Täglich',     'Mo, Di, Mi, Do, Fr, Sa'),";
+    query += "('Ev-B', '19:15 - 21:00', '2020-10-07', 'Wöchentlich', 'Mi'),";
+    query += "('Ev-C', '18:30 - 20:15', '2020-10-03', 'Wöchentlich', 'Sa');";
 
     i = exec_db(&query);
     std::cout << "Query: " << i << std::endl;
@@ -188,6 +183,7 @@ void C_Project::Create_tEvent(void)
     query += "cId           INTEGER PRIMARY KEY AUTOINCREMENT,";
     query += "cEvent        TEXT NOT NULL UNIQUE,";
     query += "cEventDetails TEXT,";
+    query += "cFirstTime    TEXT,";
     query += "cRepeat       TEXT,";
     query += "cWeekdays     TEXT";
     query += ");";

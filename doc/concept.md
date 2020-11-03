@@ -1,11 +1,11 @@
 ### Tabelle `tEvent`
 Events
 
-| cId | cEvent | cEventDetails | cRepeat       | cWeekdays              |
-|-----|--------|---------------|---------------|------------------------|
-|   1 | Ev-A   |  9:30 -  9:45 | Täglich       | Mo, Di, Mi, Do, Fr, Sa |
-|   2 | Ev-B   | 19:15 - 21:00 | Wöchentlich   | Mi                     |
-|   3 | Ev-C   | 18:30 - 20:15 | Wöchentlich   | Sa                     |
+| cId | cEvent | cEventDetails | cFirstTime | cRepeat     | cWeekdays              |
+|-----|--------|---------------|------------|-------------|------------------------|
+|   1 | Ev-A   |  9:30 -  9:45 | 2020-10-01 | Täglich     | Mo, Di, Mi, Do, Fr, Sa |
+|   2 | Ev-B   | 19:15 - 21:00 | 2020-10-07 | Wöchentlich | Mi                     |
+|   3 | Ev-C   | 18:30 - 20:15 | 2020-10-03 | Wöchentlich | Sa                     |
 
 
 ### Tabelle `tEventReplacementPlan`
