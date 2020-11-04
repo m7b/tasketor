@@ -1,11 +1,24 @@
+### Tabelle `tPeriode`
+Wiederholungsperiode / Bindungsperiode
+
+| cId | cPeriode      | cDescription |
+|-----|---------------|--------------|
+|   1 | einmalig      |              |
+|   2 | jedes mal     |              |
+|   3 | täglich       |              |
+|   4 | wöchentlich   |              |
+|   5 | 2-wöchentlich |              |
+|   6 | monatlich     |              |
+
+
 ### Tabelle `tEvent`
 Events
 
-| cId | cEvent | cEventDetails | cFirstTime | cRepeat     | cWeekdays              |
-|-----|--------|---------------|------------|-------------|------------------------|
-|   1 | Ev-A   |  9:30 -  9:45 | 2020-10-01 | Täglich     | Mo, Di, Mi, Do, Fr, Sa |
-|   2 | Ev-B   | 19:15 - 21:00 | 2020-10-07 | Wöchentlich | Mi                     |
-|   3 | Ev-C   | 18:30 - 20:15 | 2020-10-03 | Wöchentlich | Sa                     |
+| cId | cEvent | cEventDetails | cFirstTime | cPeriodeId (Wiederholungsperiode) | cWeekdays              |
+|-----|--------|---------------|------------|-----------------------------------|------------------------|
+|   1 | Ev-A   |  9:30 -  9:45 | 2020-10-01 | täglich                           | Mo, Di, Mi, Do, Fr, Sa |
+|   2 | Ev-B   | 19:15 - 21:00 | 2020-10-07 | wöchentlich                       | Mi                     |
+|   3 | Ev-C   | 18:30 - 20:15 | 2020-10-03 | wöchentlich                       | Sa                     |
 
 
 ### Tabelle `tEventReplacementPlan`
@@ -17,28 +30,16 @@ Ausfall-/Ersatzplan für Events
 |   2 |       2   | 14.11.2020 | <entfällt>   | Außerplanmäßiger Grund |
 
 
-### Tabelle `tCommitmentPeriod`
-Die Personenbindung einer Aufgabe
-
-| cId | cPeriod       | cDescription |
-|-----|---------------|--------------|
-|   1 | jedes mal     |              |
-|   2 | täglich       |              |
-|   3 | wöchentlich   |              |
-|   4 | 2-wöchentlich |              |
-|   5 | monatlich     |              |
-
-
 ### Tabelle `tTask`
 Aufgaben für alle Events
 
-| cId | cTask  | cDescription  | cPeriodId (Personenbindung) |
-|-----|--------|---------------|-----------------------------|
-|   1 | Ta-A   | Host          | Jedes mal                   |
-|   2 | Ta-B   | Co-Host       | Jedes mal                   |
-|   3 | Ta-C   | Vorsitz       | Jedes mal                   |
-|   4 | Ta-D   | Leser         | Jedes mal                   |
-|   5 | Ta-E   | Host TP       | Jedes mal                   |
+| cId | cTask  | cDescription  | cPeriodeId (Bindungsperiode) |
+|-----|--------|---------------|------------------------------|
+|   1 | Ta-A   | Host          | Jedes mal                    |
+|   2 | Ta-B   | Co-Host       | Jedes mal                    |
+|   3 | Ta-C   | Vorsitz       | Jedes mal                    |
+|   4 | Ta-D   | Leser         | Jedes mal                    |
+|   5 | Ta-E   | Host TP       | Jedes mal                    |
 
 
 ### Tabelle `tEventTasks`

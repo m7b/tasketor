@@ -24,15 +24,18 @@ C_Project::~C_Project()
 
 void C_Project::create(void)
 {
+    Create_tPeriode();
     Create_tEvent();
     Create_tEventReplacementPlan();
-    Create_tCommitmentPeriod();
     Create_tTask();
     Create_tEventTasks();
     Create_tTaskMatrix();
     Create_tPerson();
     Create_tTaskAssign();
     Create_tPersonAbsent();
+
+    Create_vTaskAssign();
+    Create_vTaskMatrix();
 }
 
 
@@ -44,30 +47,12 @@ void C_Project::load(void)
 void C_Project::loadTestData(void)
 {
     int i = open_db();
-
     std::string query;
-    query = "";
-    query += "INSERT INTO tEvent (cEvent, cEventDetails, cFirstTime, cRepeat, cWeekdays) ";
-    query += "VALUES ";
-    query += "('Ev-A', '9:30 - 9:45',   '2020-10-01', 'Täglich',     'Mo, Di, Mi, Do, Fr, Sa'),";
-    query += "('Ev-B', '19:15 - 21:00', '2020-10-07', 'Wöchentlich', 'Mi'),";
-    query += "('Ev-C', '18:30 - 20:15', '2020-10-03', 'Wöchentlich', 'Sa');";
-
-    i = exec_db(&query);
-    std::cout << "Query: " << i << std::endl;
 
     query = "";
-    query += "INSERT INTO tEventReplacementPlan (cEventId, cPlan, cReplacement, cReason) ";
+    query += "INSERT INTO tPeriode (cPeriode, cDescription) ";
     query += "VALUES ";
-    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-B'), '21.10.2020', '20.10.2020', 'Außerplanmäßiger Grund'),";
-    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-C'), '21.10.2020', '20.10.2020', 'Außerplanmäßiger Grund');";
-
-    i = exec_db(&query);
-    std::cout << "Query: " << i << std::endl;
-
-    query = "";
-    query += "INSERT INTO tCommitmentPeriod (cPeriod, cDescription) ";
-    query += "VALUES ";
+    query += "('einmalig',      ''),";
     query += "('jedes mal',     ''),";
     query += "('täglich',       ''),";
     query += "('wöchentlich',   ''),";
@@ -78,13 +63,32 @@ void C_Project::loadTestData(void)
     std::cout << "Query: " << i << std::endl;
 
     query = "";
-    query += "INSERT INTO tTask (cTask, cDescription, cPeriodId) ";
+    query += "INSERT INTO tEvent (cEvent, cEventDetails, cFirstTime, cPeriodeId, cWeekdays) ";
     query += "VALUES ";
-    query += "('Ta-A', 'Host',    (SELECT cId FROM tCommitmentPeriod WHERE cPeriod='jedes mal')),";
-    query += "('Ta-B', 'Co-Host', (SELECT cId FROM tCommitmentPeriod WHERE cPeriod='jedes mal')),";
-    query += "('Ta-C', 'Vorsitz', (SELECT cId FROM tCommitmentPeriod WHERE cPeriod='jedes mal')),";
-    query += "('Ta-D', 'Leser',   (SELECT cId FROM tCommitmentPeriod WHERE cPeriod='jedes mal')),";
-    query += "('Ta-E', 'Host TP', (SELECT cId FROM tCommitmentPeriod WHERE cPeriod='jedes mal'));";
+    query += "('Ev-A', '9:30 - 9:45',   '2020-10-01', (SELECT cId FROM tPeriode WHERE cPeriode='täglich'),     'Mo, Di, Mi, Do, Fr, Sa'),";
+    query += "('Ev-B', '19:15 - 21:00', '2020-10-07', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Mi'),";
+    query += "('Ev-C', '18:30 - 20:15', '2020-10-03', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Sa');";
+
+    i = exec_db(&query);
+    std::cout << "Query: " << i << std::endl;
+
+    query = "";
+    query += "INSERT INTO tEventReplacementPlan (cEventId, cPlan, cReplacement, cReason) ";
+    query += "VALUES ";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-B'), '2020-10-21', '2020-10-20', 'Außerplanmäßiger Grund'),";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-C'), '2020-10-21', '2020-10-20', 'Außerplanmäßiger Grund');";
+
+    i = exec_db(&query);
+    std::cout << "Query: " << i << std::endl;
+
+    query = "";
+    query += "INSERT INTO tTask (cTask, cDescription, cPeriodeId) ";
+    query += "VALUES ";
+    query += "('Ta-A', 'Host',    (SELECT cId FROM tPeriode WHERE cPeriode='jedes mal')),";
+    query += "('Ta-B', 'Co-Host', (SELECT cId FROM tPeriode WHERE cPeriode='jedes mal')),";
+    query += "('Ta-C', 'Vorsitz', (SELECT cId FROM tPeriode WHERE cPeriode='jedes mal')),";
+    query += "('Ta-D', 'Leser',   (SELECT cId FROM tPeriode WHERE cPeriode='jedes mal')),";
+    query += "('Ta-E', 'Host TP', (SELECT cId FROM tPeriode WHERE cPeriode='jedes mal'));";
 
     i = exec_db(&query);
     std::cout << "Query: " << i << std::endl;
@@ -174,6 +178,23 @@ void C_Project::save(void)
 }
 
 
+void C_Project::Create_tPeriode(void)
+{
+    int i = open_db();
+    std::string query = "";
+
+    query += "CREATE TABLE IF NOT EXISTS tPeriode (";
+    query += "cId          INTEGER PRIMARY KEY AUTOINCREMENT,";
+    query += "cPeriode     TEXT UNIQUE,";
+    query += "cDescription TEXT";
+    query += ");";
+
+    i = exec_db(&query);
+    std::cout << "tPeriode: " << i << std::endl;
+    close_db();
+}
+
+
 void C_Project::Create_tEvent(void)
 {
     int i = open_db();
@@ -183,9 +204,10 @@ void C_Project::Create_tEvent(void)
     query += "cId           INTEGER PRIMARY KEY AUTOINCREMENT,";
     query += "cEvent        TEXT NOT NULL UNIQUE,";
     query += "cEventDetails TEXT,";
-    query += "cFirstTime    TEXT,";
-    query += "cRepeat       TEXT,";
-    query += "cWeekdays     TEXT";
+    query += "cFirstTime    DATE,";
+    query += "cPeriodeId    INTEGER NOT NULL,";
+    query += "cWeekdays     TEXT,";
+    query += "FOREIGN KEY(cPeriodeId) REFERENCES tPeriode(cId)";
     query += ");";
 
     i = exec_db(&query);
@@ -202,8 +224,8 @@ void C_Project::Create_tEventReplacementPlan(void)
     query += "CREATE TABLE IF NOT EXISTS tEventReplacementPlan (";
     query += "cId          INTEGER PRIMARY KEY AUTOINCREMENT,";
     query += "cEventId     INTEGER,";
-    query += "cPlan        TEXT,";
-    query += "cReplacement TEXT,";
+    query += "cPlan        DATE,";
+    query += "cReplacement DATE,";
     query += "cReason      TEXT,";
     query += "FOREIGN KEY(cEventId) REFERENCES tEvent(cId)";
     query += ");";
@@ -220,32 +242,15 @@ void C_Project::Create_tTask(void)
     std::string query = "";
 
     query += "CREATE TABLE IF NOT EXISTS tTask (";
-    query += "cId          INTEGER PRIMARY KEY AUTOINCREMENT,";
-    query += "cTask        TEXT UNIQUE,";
-    query += "cDescription TEXT,";
-    query += "cPeriodId    INTEGER NOT NULL,";
-    query += "FOREIGN KEY(cPeriodId) REFERENCES tCommitmentPeriod(cId)";
+    query += "cId           INTEGER PRIMARY KEY AUTOINCREMENT,";
+    query += "cTask         TEXT UNIQUE,";
+    query += "cDescription  TEXT,";
+    query += "cPeriodeId    INTEGER NOT NULL,";
+    query += "FOREIGN KEY(cPeriodeId) REFERENCES tPeriode(cId)";
     query += ");";
 
     i = exec_db(&query);
     std::cout << "tTasks: " << i << std::endl;
-    close_db();
-}
-
-
-void C_Project::Create_tCommitmentPeriod(void)
-{
-    int i = open_db();
-    std::string query = "";
-
-    query += "CREATE TABLE IF NOT EXISTS tCommitmentPeriod (";
-    query += "cId          INTEGER PRIMARY KEY AUTOINCREMENT,";
-    query += "cPeriod      TEXT UNIQUE,";
-    query += "cDescription TEXT";
-    query += ");";
-
-    i = exec_db(&query);
-    std::cout << "tCommitmentPeriod: " << i << std::endl;
     close_db();
 }
 
@@ -331,12 +336,56 @@ void C_Project::Create_tPersonAbsent(void)
     query += "CREATE TABLE IF NOT EXISTS tPersonAbsent (";
     query += "cId          INTEGER PRIMARY KEY AUTOINCREMENT,";
     query += "cPersonId    INTEGER NOT NULL,";
-    query += "cFrom        TEXT    NOT NULL,";
-    query += "cTo          TEXT,";
+    query += "cFrom        DATE    NOT NULL,";
+    query += "cTo          DATE,";
     query += "FOREIGN KEY(cPersonId) REFERENCES tPerson(cId)";
     query += ");";
 
     i = exec_db(&query);
     std::cout << "tPersonAbsent: " << i << std::endl;
+    close_db();
+}
+
+
+void C_Project::Create_vTaskAssign(void)
+{
+    int i = open_db();
+    std::string query = "";
+
+    query += "CREATE VIEW IF NOT EXISTS vTaskAssign AS ";
+    query += "    SELECT cPersonId, ";
+    query += "           tPerson.cName, ";
+    query += "           cTaskId, ";
+    query += "           tTask.cTask ";
+    query += "      FROM tTaskAssign ";
+    query += "           INNER JOIN ";
+    query += "           tPerson ON tPerson.cId = tTaskAssign.cPersonId ";
+    query += "           INNER JOIN ";
+    query += "           tTask ON tTask.cId = tTaskAssign.cTaskId; ";
+
+    i = exec_db(&query);
+    std::cout << "vTaskAssign: " << i << std::endl;
+    close_db();
+}
+
+
+void C_Project::Create_vTaskMatrix(void)
+{
+    int i = open_db();
+    std::string query = "";
+
+    query += "CREATE VIEW IF NOT EXISTS vTaskMatrix AS ";
+    query += "    SELECT cTaskId, ";
+    query += "           T.cTask AS Task, ";
+    query += "           cTaskId_atst, ";
+    query += "           S.cTask AS Task_atst ";
+    query += "      FROM tTaskMatrix ";
+    query += "           INNER JOIN ";
+    query += "           tTask AS T ON T.cId = tTaskMatrix.cTaskId ";
+    query += "           INNER JOIN ";
+    query += "           tTask AS S ON S.cId = tTaskMatrix.cTaskId_atst; ";
+
+    i = exec_db(&query);
+    std::cout << "vTaskMatrix: " << i << std::endl;
     close_db();
 }
