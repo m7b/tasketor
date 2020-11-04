@@ -38,6 +38,7 @@ private:
     void Create_vEventReplacementPlan(void);
     void Create_vEventTasks(void);
     void Create_vPersonAbsent(void);
+    void Create_vTask(void);
     void Create_vTaskAssign(void);
     void Create_vTaskMatrix(void);
 
