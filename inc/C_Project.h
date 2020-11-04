@@ -22,6 +22,8 @@ public:
     void loadTestData(void);
     void save(void);
 
+    void get_tasks(void);
+
 private:
 
     void Create_tPeriode(void);
@@ -43,6 +45,27 @@ private:
     void Create_vTaskMatrix(void);
 
 };
+
+struct tTask
+{
+    bool assignable;  //Kann der Aufgabe zugewiesen werden
+    bool available;   //Ist anwesend
+    bool assigned;    //Schon zugeteilt
+};
+
+struct PersPlan
+{
+    int assign_count;
+    tTask Task[5];  //Alle Aufgaben
+};
+
+
+struct PersList
+{
+    std::string datum;
+    PersPlan Person[10]; //Alle Personen
+};
+
 
 
 #endif // header guard

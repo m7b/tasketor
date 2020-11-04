@@ -12,6 +12,8 @@
 #include <boost/locale.hpp>
 #include "boost/date_time/gregorian/gregorian.hpp"
 
+PersList PList;
+
 int main()
 {
     std::string prj_file = "todo.db";
