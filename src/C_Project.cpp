@@ -35,6 +35,8 @@ void C_Project::create(void)
     Create_tPersonAbsent();
 
     Create_vEvent();
+    Create_vEventReplacementPlan();
+    Create_vEventTasks();
     Create_vTaskAssign();
     Create_vTaskMatrix();
 }
@@ -225,7 +227,7 @@ void C_Project::Create_tEventReplacementPlan(void)
     query += "CREATE TABLE IF NOT EXISTS tEventReplacementPlan (";
     query += "cId          INTEGER PRIMARY KEY AUTOINCREMENT,";
     query += "cEventId     INTEGER,";
-    query += "cPlan        DATE,";
+    query += "cPlan        DATE NOT NULL,";
     query += "cReplacement DATE,";
     query += "cReason      TEXT,";
     query += "FOREIGN KEY(cEventId) REFERENCES tEvent(cId)";
@@ -365,6 +367,48 @@ void C_Project::Create_vEvent(void)
 
     i = exec_db(&query);
     std::cout << "vEvent: " << i << std::endl;
+    close_db();
+}
+
+
+void C_Project::Create_vEventReplacementPlan(void)
+{
+    int i = open_db();
+    std::string query = "";
+
+    query += "CREATE VIEW IF NOT EXISTS vEventReplacementPlan AS ";
+    query += "    SELECT tEvent.cEvent, ";
+    query += "           cPlan, ";
+    query += "           cReplacement, ";
+    query += "           cReason ";
+    query += "      FROM tEventReplacementPlan ";
+    query += "           INNER JOIN ";
+    query += "           tEvent ON tEvent.cId = tEventReplacementPlan.cEventId; ";
+
+    i = exec_db(&query);
+    std::cout << "vEventReplacementPlan: " << i << std::endl;
+    close_db();
+}
+
+
+void C_Project::Create_vEventTasks(void)
+{
+    int i = open_db();
+    std::string query = "";
+
+    query += "CREATE VIEW IF NOT EXISTS vEventTasks AS ";
+    query += "    SELECT cEventId, ";
+    query += "           cEvent, ";
+    query += "           cTaskId, ";
+    query += "           cTask ";
+    query += "      FROM tEventTasks ";
+    query += "           INNER JOIN ";
+    query += "           tEvent ON tEvent.cId = tEventTasks.cEventId ";
+    query += "           INNER JOIN ";
+    query += "           tTask ON tTask.cId = tEventTasks.cTaskId; ";
+
+    i = exec_db(&query);
+    std::cout << "vEventTasks: " << i << std::endl;
     close_db();
 }
 
