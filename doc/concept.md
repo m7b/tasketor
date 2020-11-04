@@ -157,7 +157,7 @@ Erstelle Planung <von Datum> <bis Datum>
  1. Füge planmäßige Events in Kalender
  2. Verändere planmäßige Events in Kalender unter Berücksichtigung eines Ersatztermins
  3. Erstelle Spaltenanordnung der Tasks.
-    - Task mit größte Personenbindung ganz links.
-	- Abnehmende Personenbindung nach rechts anordnen.
+    - Task mit größte Bindungsperiode ganz links.
+	- Abnehmende Bindungsperiode nach rechts anordnen.
  3. Erstelle Liste mit anwesenden Personen je Event
  4. Zuweisung Personen zu den Aufgaben zu jedem Event
