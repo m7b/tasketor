@@ -34,6 +34,7 @@ void C_Project::create(void)
     Create_tTaskAssign();
     Create_tPersonAbsent();
 
+    Create_vEvent();
     Create_vTaskAssign();
     Create_vTaskMatrix();
 }
@@ -343,6 +344,27 @@ void C_Project::Create_tPersonAbsent(void)
 
     i = exec_db(&query);
     std::cout << "tPersonAbsent: " << i << std::endl;
+    close_db();
+}
+
+
+void C_Project::Create_vEvent(void)
+{
+    int i = open_db();
+    std::string query = "";
+
+    query += "CREATE VIEW IF NOT EXISTS vEvent AS ";
+    query += "    SELECT cEvent, ";
+    query += "           cEventDetails, ";
+    query += "           cFirstTime, ";
+    query += "           tPeriode.cPeriode, ";
+    query += "           cWeekdays ";
+    query += "      FROM tEvent ";
+    query += "           INNER JOIN ";
+    query += "           tPeriode ON tPeriode.cId = tEvent.cPeriodeId; ";
+
+    i = exec_db(&query);
+    std::cout << "vEvent: " << i << std::endl;
     close_db();
 }
 

@@ -34,6 +34,7 @@ private:
     void Create_tTaskAssign(void);
     void Create_tPersonAbsent(void);
 
+    void Create_vEvent(void);
     void Create_vTaskAssign(void);
     void Create_vTaskMatrix(void);
 
