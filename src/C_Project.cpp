@@ -37,6 +37,7 @@ void C_Project::create(void)
     Create_vEvent();
     Create_vEventReplacementPlan();
     Create_vEventTasks();
+    Create_vPersonAbsent();
     Create_vTaskAssign();
     Create_vTaskMatrix();
 }
@@ -409,6 +410,25 @@ void C_Project::Create_vEventTasks(void)
 
     i = exec_db(&query);
     std::cout << "vEventTasks: " << i << std::endl;
+    close_db();
+}
+
+
+void C_Project::Create_vPersonAbsent(void)
+{
+    int i = open_db();
+    std::string query = "";
+
+    query += "CREATE VIEW IF NOT EXISTS vPersonAbsent AS ";
+    query += "    SELECT cName, ";
+    query += "           cFrom, ";
+    query += "           cTo ";
+    query += "      FROM tPersonAbsent ";
+    query += "           INNER JOIN ";
+    query += "           tPerson ON tPerson.cId = tPersonAbsent.cPersonId; ";
+
+    i = exec_db(&query);
+    std::cout << "vPersonAbsent: " << i << std::endl;
     close_db();
 }
 
