@@ -6,7 +6,7 @@
  * Copyright: m7b
  * License:
  **************************************************************/
-
+#include "spdlog/sinks/basic_file_sink.h"
 
 #include "C_Project.h"
 #include <boost/locale.hpp>
@@ -16,6 +16,10 @@ PersList PList;
 
 int main()
 {
+	auto logger = spdlog::basic_logger_mt("basic_logger", "logs/basic-log.txt");
+	logger->info("Hello info!!");
+	logger->error("Hello error!!");
+	
     std::string prj_file = "todo.db";
     C_Project test(&prj_file);
 
