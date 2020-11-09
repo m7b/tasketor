@@ -51,7 +51,7 @@ void C_Project::load(void)
 
 void C_Project::loadTestData(void)
 {
-    int i = open_db();
+    rc = open_db();
     std::string query;
 
     query = "";
@@ -64,8 +64,8 @@ void C_Project::loadTestData(void)
     query += "('2-wöchentlich', ''),";
     query += "('monatlich',     '');";
 
-    i = exec_db(&query);
-    std::cout << "Query: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "Query: " << rc << std::endl;
 
     query = "";
     query += "INSERT INTO tEvent (cEvent, cEventDetails, cFirstTime, cPeriodeId, cWeekdays) ";
@@ -74,8 +74,8 @@ void C_Project::loadTestData(void)
     query += "('Ev-B', '19:15 - 21:00', '2020-10-07', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Mi'),";
     query += "('Ev-C', '18:30 - 20:15', '2020-10-03', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Sa');";
 
-    i = exec_db(&query);
-    std::cout << "Query: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "Query: " << rc << std::endl;
 
     query = "";
     query += "INSERT INTO tEventReplacementPlan (cEventId, cPlan, cReplacement, cReason) ";
@@ -83,8 +83,8 @@ void C_Project::loadTestData(void)
     query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-B'), '2020-10-21', '2020-10-20', 'Außerplanmäßiger Grund'),";
     query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-C'), '2020-10-21', '2020-10-20', 'Außerplanmäßiger Grund');";
 
-    i = exec_db(&query);
-    std::cout << "Query: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "Query: " << rc << std::endl;
 
     query = "";
     query += "INSERT INTO tTask (cTask, cDescription, cPeriodeId) ";
@@ -95,8 +95,8 @@ void C_Project::loadTestData(void)
     query += "('Ta-D', 'Leser',   (SELECT cId FROM tPeriode WHERE cPeriode='jedes mal')),";
     query += "('Ta-E', 'Host TP', (SELECT cId FROM tPeriode WHERE cPeriode='jedes mal'));";
 
-    i = exec_db(&query);
-    std::cout << "Query: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "Query: " << rc << std::endl;
 
     query = "";
     query += "INSERT INTO tEventTasks (cEventId, cTaskId) ";
@@ -109,8 +109,8 @@ void C_Project::loadTestData(void)
     query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-C'), (SELECT cId FROM tTask WHERE cTask='Ta-C')),";
     query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-C'), (SELECT cId FROM tTask WHERE cTask='Ta-D'));";
 
-    i = exec_db(&query);
-    std::cout << "Query: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "Query: " << rc << std::endl;
 
     query = "";
     query += "INSERT INTO tTaskMatrix (cTaskId, cTaskId_atst) ";
@@ -120,8 +120,8 @@ void C_Project::loadTestData(void)
     query += "((SELECT cId FROM tTask WHERE cTask='Ta-C'), (SELECT cId FROM tTask WHERE cTask='Ta-B')),";
     query += "((SELECT cId FROM tTask WHERE cTask='Ta-D'), (SELECT cId FROM tTask WHERE cTask='Ta-B'));";
 
-    i = exec_db(&query);
-    std::cout << "Query: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "Query: " << rc << std::endl;
 
     query = "";
     query += "INSERT INTO tPerson (cName) ";
@@ -134,8 +134,8 @@ void C_Project::loadTestData(void)
     query += "('Eufers'),";
     query += "('Siffel');";
 
-    i = exec_db(&query);
-    std::cout << "Query: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "Query: " << rc << std::endl;
 
     query = "";
     query += "INSERT INTO tTaskAssign (cPersonId, cTaskId) ";
@@ -162,8 +162,8 @@ void C_Project::loadTestData(void)
     query += "((SELECT cId FROM tPerson WHERE cName='Siffel'), (SELECT cId FROM tTask WHERE cTask='Ta-C')),";
     query += "((SELECT cId FROM tPerson WHERE cName='Siffel'), (SELECT cId FROM tTask WHERE cTask='Ta-D'));";
 
-    i = exec_db(&query);
-    std::cout << "Query: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "Query: " << rc << std::endl;
 
     query = "";
     query += "INSERT INTO tPersonAbsent (cPersonId, cFrom, cTo) ";
@@ -171,8 +171,8 @@ void C_Project::loadTestData(void)
     query += "((SELECT cId FROM tPerson WHERE cName='Edgar'),     '2020-10-26', '2020-11-01'),";
     query += "((SELECT cId FROM tPerson WHERE cName='Braftaler'), '2020-10-31', '');";
 
-    i = exec_db(&query);
-    std::cout << "Query: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "Query: " << rc << std::endl;
 
     close_db();
 }
@@ -183,9 +183,58 @@ void C_Project::save(void)
 }
 
 
+std::string C_Project::get_event(std::string date)
+{
+    rc = open_db();
+
+    struct t_res_events
+    {
+        std::string cEvent;
+        std::string cEventDetail;
+        std::string cFirstTime;
+        std::string cPeriode;
+        std::string cWeekdays;
+    };
+
+    std::vector<t_res_events> v_res;
+    t_res_events res;
+
+    std::string query = "";
+    query += "SELECT * FROM vEvent";
+
+    rc = query_db(&query);
+
+    while (true)
+    {
+        rc = step_db();
+        if(rc == SQLITE_ROW)
+        {
+            res.cEvent       = get_text(COL_0);
+            res.cEventDetail = get_text(COL_1);
+            res.cFirstTime   = get_text(COL_2);
+            res.cPeriode     = get_text(COL_3);
+            res.cWeekdays    = get_text(COL_4);
+            v_res.push_back(res);
+        }
+
+        if(done_or_error(rc))
+            break;
+    }
+
+    rc = close_db();
+
+    /////////
+    //Iterate over result iv event is at date
+
+    for (const auto &el : v_res)
+        if (el.cPeriode == "täglich")
+            ;
+}
+
+
 void C_Project::Create_tPeriode(void)
 {
-    int i = open_db();
+    rc = open_db();
     std::string query = "";
 
     query += "CREATE TABLE IF NOT EXISTS tPeriode (";
@@ -194,15 +243,15 @@ void C_Project::Create_tPeriode(void)
     query += "cDescription TEXT";
     query += ");";
 
-    i = exec_db(&query);
-    std::cout << "tPeriode: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "tPeriode: " << rc << std::endl;
     close_db();
 }
 
 
 void C_Project::Create_tEvent(void)
 {
-    int i = open_db();
+    rc = open_db();
     std::string query = "";
 
     query += "CREATE TABLE IF NOT EXISTS tEvent (";
@@ -215,15 +264,15 @@ void C_Project::Create_tEvent(void)
     query += "FOREIGN KEY(cPeriodeId) REFERENCES tPeriode(cId)";
     query += ");";
 
-    i = exec_db(&query);
-    std::cout << "tEvent: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "tEvent: " << rc << std::endl;
     close_db();
 }
 
 
 void C_Project::Create_tEventReplacementPlan(void)
 {
-    int i = open_db();
+    rc = open_db();
     std::string query = "";
 
     query += "CREATE TABLE IF NOT EXISTS tEventReplacementPlan (";
@@ -235,15 +284,15 @@ void C_Project::Create_tEventReplacementPlan(void)
     query += "FOREIGN KEY(cEventId) REFERENCES tEvent(cId)";
     query += ");";
 
-    i = exec_db(&query);
-    std::cout << "tEventReplacementPlan: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "tEventReplacementPlan: " << rc << std::endl;
     close_db();
 }
 
 
 void C_Project::Create_tTask(void)
 {
-    int i = open_db();
+    rc = open_db();
     std::string query = "";
 
     query += "CREATE TABLE IF NOT EXISTS tTask (";
@@ -254,15 +303,15 @@ void C_Project::Create_tTask(void)
     query += "FOREIGN KEY(cPeriodeId) REFERENCES tPeriode(cId)";
     query += ");";
 
-    i = exec_db(&query);
-    std::cout << "tTasks: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "tTasks: " << rc << std::endl;
     close_db();
 }
 
 
 void C_Project::Create_tEventTasks(void)
 {
-    int i = open_db();
+    rc = open_db();
     std::string query = "";
 
     query += "CREATE TABLE IF NOT EXISTS tEventTasks (";
@@ -273,15 +322,15 @@ void C_Project::Create_tEventTasks(void)
     query += "FOREIGN KEY(cTaskId)  REFERENCES tTask(cId)";
     query += ");";
 
-    i = exec_db(&query);
-    std::cout << "tEventTasks: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "tEventTasks: " << rc << std::endl;
     close_db();
 }
 
 
 void C_Project::Create_tTaskMatrix(void)
 {
-    int i = open_db();
+    rc = open_db();
     std::string query = "";
 
     query += "CREATE TABLE IF NOT EXISTS tTaskMatrix (";
@@ -292,15 +341,15 @@ void C_Project::Create_tTaskMatrix(void)
     query += "FOREIGN KEY(cTaskId_atst) REFERENCES tTask(cId)";
     query += ");";
 
-    i = exec_db(&query);
-    std::cout << "tTaskMatrix: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "tTaskMatrix: " << rc << std::endl;
     close_db();
 }
 
 
 void C_Project::Create_tPerson(void)
 {
-    int i = open_db();
+    rc = open_db();
     std::string query = "";
 
     query += "CREATE TABLE IF NOT EXISTS tPerson (";
@@ -308,15 +357,15 @@ void C_Project::Create_tPerson(void)
     query += "cName        TEXT NOT NULL";
     query += ");";
 
-    i = exec_db(&query);
-    std::cout << "tPerson: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "tPerson: " << rc << std::endl;
     close_db();
 }
 
 
 void C_Project::Create_tTaskAssign(void)
 {
-    int i = open_db();
+    rc = open_db();
     std::string query = "";
 
     query += "CREATE TABLE IF NOT EXISTS tTaskAssign (";
@@ -327,15 +376,15 @@ void C_Project::Create_tTaskAssign(void)
     query += "FOREIGN KEY(cTaskId)   REFERENCES tTask(cId)";
     query += ");";
 
-    i = exec_db(&query);
-    std::cout << "tTaskAssign: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "tTaskAssign: " << rc << std::endl;
     close_db();
 }
 
 
 void C_Project::Create_tPersonAbsent(void)
 {
-    int i = open_db();
+    rc = open_db();
     std::string query = "";
 
     query += "CREATE TABLE IF NOT EXISTS tPersonAbsent (";
@@ -346,15 +395,15 @@ void C_Project::Create_tPersonAbsent(void)
     query += "FOREIGN KEY(cPersonId) REFERENCES tPerson(cId)";
     query += ");";
 
-    i = exec_db(&query);
-    std::cout << "tPersonAbsent: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "tPersonAbsent: " << rc << std::endl;
     close_db();
 }
 
 
 void C_Project::Create_vEvent(void)
 {
-    int i = open_db();
+    rc = open_db();
     std::string query = "";
 
     query += "CREATE VIEW IF NOT EXISTS vEvent AS ";
@@ -367,15 +416,15 @@ void C_Project::Create_vEvent(void)
     query += "           INNER JOIN ";
     query += "           tPeriode ON tPeriode.cId = tEvent.cPeriodeId; ";
 
-    i = exec_db(&query);
-    std::cout << "vEvent: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "vEvent: " << rc << std::endl;
     close_db();
 }
 
 
 void C_Project::Create_vEventReplacementPlan(void)
 {
-    int i = open_db();
+    rc = open_db();
     std::string query = "";
 
     query += "CREATE VIEW IF NOT EXISTS vEventReplacementPlan AS ";
@@ -387,15 +436,15 @@ void C_Project::Create_vEventReplacementPlan(void)
     query += "           INNER JOIN ";
     query += "           tEvent ON tEvent.cId = tEventReplacementPlan.cEventId; ";
 
-    i = exec_db(&query);
-    std::cout << "vEventReplacementPlan: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "vEventReplacementPlan: " << rc << std::endl;
     close_db();
 }
 
 
 void C_Project::Create_vEventTasks(void)
 {
-    int i = open_db();
+    rc = open_db();
     std::string query = "";
 
     query += "CREATE VIEW IF NOT EXISTS vEventTasks AS ";
@@ -409,15 +458,15 @@ void C_Project::Create_vEventTasks(void)
     query += "           INNER JOIN ";
     query += "           tTask ON tTask.cId = tEventTasks.cTaskId; ";
 
-    i = exec_db(&query);
-    std::cout << "vEventTasks: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "vEventTasks: " << rc << std::endl;
     close_db();
 }
 
 
 void C_Project::Create_vPersonAbsent(void)
 {
-    int i = open_db();
+    rc = open_db();
     std::string query = "";
 
     query += "CREATE VIEW IF NOT EXISTS vPersonAbsent AS ";
@@ -428,15 +477,15 @@ void C_Project::Create_vPersonAbsent(void)
     query += "           INNER JOIN ";
     query += "           tPerson ON tPerson.cId = tPersonAbsent.cPersonId; ";
 
-    i = exec_db(&query);
-    std::cout << "vPersonAbsent: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "vPersonAbsent: " << rc << std::endl;
     close_db();
 }
 
 
 void C_Project::Create_vTask(void)
 {
-    int i = open_db();
+    rc = open_db();
     std::string query = "";
 
     query += "CREATE VIEW IF NOT EXISTS vTask AS ";
@@ -447,15 +496,15 @@ void C_Project::Create_vTask(void)
     query += "           INNER JOIN ";
     query += "           tPeriode ON tPeriode.cId = tTask.cPeriodeId; ";
 
-    i = exec_db(&query);
-    std::cout << "vTask: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "vTask: " << rc << std::endl;
     close_db();
 }
 
 
 void C_Project::Create_vTaskAssign(void)
 {
-    int i = open_db();
+    rc = open_db();
     std::string query = "";
 
     query += "CREATE VIEW IF NOT EXISTS vTaskAssign AS ";
@@ -469,15 +518,15 @@ void C_Project::Create_vTaskAssign(void)
     query += "           INNER JOIN ";
     query += "           tTask ON tTask.cId = tTaskAssign.cTaskId; ";
 
-    i = exec_db(&query);
-    std::cout << "vTaskAssign: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "vTaskAssign: " << rc << std::endl;
     close_db();
 }
 
 
 void C_Project::Create_vTaskMatrix(void)
 {
-    int i = open_db();
+    rc = open_db();
     std::string query = "";
 
     query += "CREATE VIEW IF NOT EXISTS vTaskMatrix AS ";
@@ -491,7 +540,7 @@ void C_Project::Create_vTaskMatrix(void)
     query += "           INNER JOIN ";
     query += "           tTask AS S ON S.cId = tTaskMatrix.cTaskId_atst; ";
 
-    i = exec_db(&query);
-    std::cout << "vTaskMatrix: " << i << std::endl;
+    rc = exec_db(&query);
+    std::cout << "vTaskMatrix: " << rc << std::endl;
     close_db();
 }

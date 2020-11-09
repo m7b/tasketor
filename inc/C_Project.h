@@ -10,6 +10,7 @@
  **************************************************************/
 
 #include "C_DbHandle.h"
+#include <vector>
 
 class C_Project : public C_DbHandle
 {
@@ -22,7 +23,7 @@ public:
     void loadTestData(void);
     void save(void);
 
-    void get_tasks(void);
+    std::string get_event(std::string date);
 
 private:
 

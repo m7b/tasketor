@@ -75,6 +75,8 @@ class C_DbHandle
 
         const char *get_errormsg(void);
 
+        int rc;
+
     protected:
 
     private:

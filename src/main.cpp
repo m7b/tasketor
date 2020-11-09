@@ -6,11 +6,8 @@
  * Copyright: m7b
  * License:
  **************************************************************/
-#include "spdlog/sinks/basic_file_sink.h"
 
-#include "C_Project.h"
-#include <boost/locale.hpp>
-#include "boost/date_time/gregorian/gregorian.hpp"
+#include "main.h"
 
 PersList PList;
 
@@ -19,7 +16,7 @@ int main()
 	auto logger = spdlog::basic_logger_mt("basic_logger", "logs/basic-log.txt");
 	logger->info("Hello info!!");
 	logger->error("Hello error!!");
-	
+
     std::string prj_file = "todo.db";
     C_Project test(&prj_file);
 
@@ -44,11 +41,12 @@ int main()
     std::cout << "==========================================";
     std::cout << std::endl << std::endl;
 
-    std::cout << "|Datum     | ... |" << std::endl;
-    std::cout << "|----------|-----|" << std::endl;
+    std::cout << "| Datum    | Event |" << std::endl;
+    std::cout << "|----------|-------|" << std::endl;
     for (date d = from; d <= to; d+=days(1))
     {
-        std::cout << "|" << to_iso_extended_string(d) << "|     |" << std::endl;
+        std::cout << "|" << to_iso_extended_string(d) << "|       |" << std::endl;
+        std::cout << test.get_event(to_iso_extended_string(d))  << std::endl;
     }
 
     return 0;
