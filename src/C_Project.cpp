@@ -183,56 +183,32 @@ void C_Project::save(void)
 }
 
 
+//Pass a date and get the event at this date
 std::string C_Project::get_event(std::string date)
 {
-    rc = open_db();
+    std::string result_list = "";
 
-    struct t_res_events
-    {
-        std::string cEvent;
-        std::string cEventDetail;
-        std::string cFirstTime;
-        std::string cPeriode;
-        std::string cWeekdays;
-    };
+    std::vector<res_events> v_events;
 
-    std::vector<t_res_events> v_res;
-    t_res_events res;
-
-    std::string query = "";
-    query += "SELECT * FROM vEvent";
-
-    rc = query_db(&query);
-
-    while (true)
-    {
-        rc = step_db();
-        if(rc == SQLITE_ROW)
-        {
-            res.cEvent       = get_text(COL_0);
-            res.cEventDetail = get_text(COL_1);
-            res.cFirstTime   = get_text(COL_2);
-            res.cPeriode     = get_text(COL_3);
-            res.cWeekdays    = get_text(COL_4);
-            v_res.push_back(res);
-        }
-
-        if(done_or_error(rc))
-            break;
-    }
-
-    rc = close_db();
+    get_all_events(&v_events);
 
     /////////
     //Iterate over result iv event is at date
 
-    for (const auto &el : v_res)
+    for (const auto &el : v_events)
     {
         if (el.cPeriode == "täglich")
-            ;
+        {
+            result_list += el.cEvent + ",";
+        }
+
         if (el.cPeriode == "wöchentlich")
-            ;
+        {
+            result_list += el.cEvent + ",";
+        }
     }
+
+    return result_list;
 }
 
 
@@ -547,4 +523,36 @@ void C_Project::Create_vTaskMatrix(void)
     rc = exec_db(&query);
     std::cout << "vTaskMatrix: " << rc << std::endl;
     close_db();
+}
+
+
+
+void C_Project::get_all_events(std::vector<res_events> *v_res)
+{
+    rc = open_db();
+
+    std::string query = "";
+    query += "SELECT * FROM vEvent";
+
+    rc = query_db(&query);
+
+    while (true)
+    {
+        rc = step_db();
+        if(rc == SQLITE_ROW)
+        {
+            res_events res;
+            res.cEvent       = get_text(COL_0);
+            res.cEventDetail = get_text(COL_1);
+            res.cFirstTime   = get_text(COL_2);
+            res.cPeriode     = get_text(COL_3);
+            res.cWeekdays    = get_text(COL_4);
+            v_res->push_back(res);
+        }
+
+        if(done_or_error(rc))
+            break;
+    }
+
+    rc = close_db();
 }

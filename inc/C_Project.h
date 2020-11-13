@@ -12,6 +12,17 @@
 #include "C_DbHandle.h"
 #include <vector>
 
+
+
+typedef struct _res_events
+{
+    std::string cEvent;
+    std::string cEventDetail;
+    std::string cFirstTime;
+    std::string cPeriode;
+    std::string cWeekdays;
+} res_events;
+
 class C_Project : public C_DbHandle
 {
 public:
@@ -46,6 +57,7 @@ private:
     void Create_vTaskAssign(void);
     void Create_vTaskMatrix(void);
 
+    void get_all_events(std::vector<res_events> *v_res);
 };
 
 struct tTask
