@@ -56,6 +56,12 @@ include_directories("${CMAKE_CURRENT_BINARY_DIR}"
 
 
 add_library(
+    this_project
+    src/C_DbHandle.cpp
+    src/C_Project.cpp
+)
+
+add_library(
     sqlite
     ${SQLITE_INC}/sqlite3.c
 )
@@ -67,8 +73,6 @@ add_executable(
     ${CMAKE_PROJECT_NAME}
 #    WIN32
     src/main.cpp
-    src/C_DbHandle.cpp
-    src/C_Project.cpp
 #    res/resource.rc
 #    res/svn.rc
 )
@@ -168,6 +172,7 @@ endif()
 # link libraries
 target_link_libraries(
     ${CMAKE_PROJECT_NAME}
+	this_project
 #    ${wxWidgets_LIBRARIES}
     ${Boost_LIBRARIES}
     sqlite

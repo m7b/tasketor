@@ -49,7 +49,7 @@ void C_Project::load(void)
 }
 
 
-void C_Project::loadTestData(void)
+void C_Project::insertTestData(void)
 {
     rc = open_db();
     std::string query;
@@ -227,8 +227,12 @@ std::string C_Project::get_event(std::string date)
     //Iterate over result iv event is at date
 
     for (const auto &el : v_res)
+    {
         if (el.cPeriode == "täglich")
             ;
+        if (el.cPeriode == "wöchentlich")
+            ;
+    }
 }
 
 

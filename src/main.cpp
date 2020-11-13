@@ -21,7 +21,7 @@ int main()
     C_Project test(&prj_file);
 
     test.create();
-    test.loadTestData();
+    test.insertTestData();
 
     using namespace boost::locale;
     using namespace boost::gregorian;

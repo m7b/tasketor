@@ -20,9 +20,10 @@ public:
 
     void create(void);
     void load(void);
-    void loadTestData(void);
+    void insertTestData(void);
     void save(void);
 
+    //Pass a date and get the event at this date
     std::string get_event(std::string date);
 
 private:
