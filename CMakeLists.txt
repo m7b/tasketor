@@ -16,7 +16,37 @@ CONFIGURE_FILE(
 LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/nsis")
 
-ADD_SUBDIRECTORY(doc)
+# ADD_SUBDIRECTORY(doc)
+
+
+
+# ExternalProject CMake module
+include(ExternalProject)
+
+set(SPDLOG_PATH ${PROJECT_BINARY_DIR}/third_party/spdlog)
+set(SPDLOG_INSTALL_PREFIX ${SPDLOG_PATH}/install)
+ExternalProject_Add(spdlog
+    PREFIX ${SPDLOG_PATH}
+    GIT_REPOSITORY https://github.com/gabime/spdlog
+    GIT_TAG 22a169bc319ac06948e7ee0be6b9b0ac81386604
+    GIT_PROGRESS ON
+    CMAKE_GENERATOR ${CMAKE_GENERATOR}
+    CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
+    CMAKE_ARGS
+        -DCMAKE_INSTALL_MESSAGE=LAZY
+    CMAKE_CACHE_ARGS
+        -DSPDLOG_BUILD_EXAMPLE:BOOL=OFF
+        -DSPDLOG_BUILD_BENCH:BOOL=OFF
+        -DSPDLOG_BUILD_TESTS:BOOL=OFF
+        -DCMAKE_INSTALL_PREFIX:PATH=${SPDLOG_INSTALL_PREFIX}
+)
+
+
+
+
+
+
+
 
 ## wxWidgets
 #SET(wxWidgets_ROOT_DIR "W:/wxWidgets-3.0.5.1")
@@ -39,9 +69,11 @@ SET(Boost_USE_STATIC_RUNTIME    OFF)
 FIND_PACKAGE(Boost 1.74.0 REQUIRED COMPONENTS filesystem date_time locale)
 
 
+FIND_PACKAGE(SQLite3 REQUIRED)
 
-SET( SQLITE_INC     "W:/sqlite-amalgamation-3330000")
-SET( SPDLOG_INC     "W:/spdlog-1.8.1/include")
+
+# SET( SQLITE_INC     "W:/sqlite-amalgamation-3330000")
+SET( SPDLOG_INC     "${SPDLOG_PATH}")
 
 
 # add the binary tree to the search path for include files
@@ -50,9 +82,11 @@ include_directories("${CMAKE_CURRENT_BINARY_DIR}"
                     "${PROJECT_SOURCE_DIR}/inc"
 #                    "${PROJECT_SOURCE_DIR}/wxfb"
                     "${Boost_INCLUDE_DIRS}"
-                    "${SQLITE_INC}"
+                    "${SQLite3_INCLUDE_DIRS}"
+#                    "${SQLITE_INC}"
                     "${SPDLOG_INC}"
 )
+
 
 
 add_library(
@@ -61,10 +95,10 @@ add_library(
     src/C_Project.cpp
 )
 
-add_library(
-    sqlite
-    ${SQLITE_INC}/sqlite3.c
-)
+# add_library(
+#     sqlite
+#     ${SQLITE_INC}/sqlite3.c
+# )
 #set_source_files_properties(${SQLITE_INC}/sqlite3.c PROPERTIES COMPILE_FLAGS "-O3 -Wno-unused-but-set-variable -DSQLITE_DQS=0")
 
 
@@ -84,7 +118,8 @@ target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC $<$<CONFIG:Debug>:-g>)
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC $<$<CONFIG:Debug>:-O0>)
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC $<$<CONFIG:Release>:-Ofast>)
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -funroll-loops)
-target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -mthreads)
+#target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -mthreads)
+target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -pthread)
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -pipe)
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -Wall)
 
@@ -110,37 +145,37 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC $<$<CONFIG:Debug>:wxDEBU
 # )
 
 
-# generate CHANGELOG from *.md to *.html (on change)
-FIND_PROGRAM(PANDOC_EXECUTABLE V:/pandoc-2.6-windows-x86_64/pandoc.exe)
-SET(CHANGELOG_MD   ${PROJECT_SOURCE_DIR}/CHANGELOG.md)
-SET(CHANGELOG_HTML ${CMAKE_CURRENT_BINARY_DIR}/CHANGELOG.html)
-ADD_CUSTOM_COMMAND(
-    OUTPUT ${CHANGELOG_HTML}
-    COMMAND ${PANDOC_EXECUTABLE} ${CHANGELOG_MD} -o ${CHANGELOG_HTML}
-    DEPENDS ${CHANGELOG_MD}
-)
-ADD_CUSTOM_TARGET(
-    changelog
-    DEPENDS ${CHANGELOG_HTML}
-    COMMENT "Create changelog file (md to html)"
-)
-SET_PROPERTY(SOURCE res/resource.rc APPEND PROPERTY OBJECT_DEPENDS ${CHANGELOG_HTML})
+# # generate CHANGELOG from *.md to *.html (on change)
+# FIND_PROGRAM(PANDOC_EXECUTABLE V:/pandoc-2.6-windows-x86_64/pandoc.exe)
+# SET(CHANGELOG_MD   ${PROJECT_SOURCE_DIR}/CHANGELOG.md)
+# SET(CHANGELOG_HTML ${CMAKE_CURRENT_BINARY_DIR}/CHANGELOG.html)
+# ADD_CUSTOM_COMMAND(
+#     OUTPUT ${CHANGELOG_HTML}
+#     COMMAND ${PANDOC_EXECUTABLE} ${CHANGELOG_MD} -o ${CHANGELOG_HTML}
+#     DEPENDS ${CHANGELOG_MD}
+# )
+# ADD_CUSTOM_TARGET(
+#     changelog
+#     DEPENDS ${CHANGELOG_HTML}
+#     COMMENT "Create changelog file (md to html)"
+# )
+# SET_PROPERTY(SOURCE res/resource.rc APPEND PROPERTY OBJECT_DEPENDS ${CHANGELOG_HTML})
 
 
-# generate TOOLCHAIN from *.md to *.html (on change)
-SET(TOOLCHAIN_MD   ${PROJECT_SOURCE_DIR}/TOOLCHAIN.md)
-SET(TOOLCHAIN_HTML ${CMAKE_CURRENT_BINARY_DIR}/TOOLCHAIN.html)
-ADD_CUSTOM_COMMAND(
-    OUTPUT ${TOOLCHAIN_HTML}
-    COMMAND ${PANDOC_EXECUTABLE} ${TOOLCHAIN_MD} -o ${TOOLCHAIN_HTML}
-    DEPENDS ${TOOLCHAIN_MD}
-)
-ADD_CUSTOM_TARGET(
-    toolchain
-    DEPENDS ${TOOLCHAIN_HTML}
-    COMMENT "Create toolchain file (md to html)"
-)
-SET_PROPERTY(SOURCE res/resource.rc APPEND PROPERTY OBJECT_DEPENDS ${TOOLCHAIN_HTML})
+# # generate TOOLCHAIN from *.md to *.html (on change)
+# SET(TOOLCHAIN_MD   ${PROJECT_SOURCE_DIR}/TOOLCHAIN.md)
+# SET(TOOLCHAIN_HTML ${CMAKE_CURRENT_BINARY_DIR}/TOOLCHAIN.html)
+# ADD_CUSTOM_COMMAND(
+#     OUTPUT ${TOOLCHAIN_HTML}
+#     COMMAND ${PANDOC_EXECUTABLE} ${TOOLCHAIN_MD} -o ${TOOLCHAIN_HTML}
+#     DEPENDS ${TOOLCHAIN_MD}
+# )
+# ADD_CUSTOM_TARGET(
+#     toolchain
+#     DEPENDS ${TOOLCHAIN_HTML}
+#     COMMENT "Create toolchain file (md to html)"
+# )
+# SET_PROPERTY(SOURCE res/resource.rc APPEND PROPERTY OBJECT_DEPENDS ${TOOLCHAIN_HTML})
 
 
 # # generate SVNLog (always)
@@ -158,14 +193,14 @@ SET_PROPERTY(SOURCE res/resource.rc APPEND PROPERTY OBJECT_DEPENDS ${TOOLCHAIN_H
 
 
 
-if(CMAKE_BUILD_TYPE STREQUAL Release)
-    MESSAGE(STATUS "Do minimal size release stuff")
-    FIND_PROGRAM(UPX_EXECUTABLE V:/upx-3.96-win64/upx.exe)
-    ADD_CUSTOM_COMMAND(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
-    COMMAND ${UPX_EXECUTABLE} $<TARGET_FILE:${CMAKE_PROJECT_NAME}>
-    COMMENT "Running UPX packer ..."
-    )
-endif()
+# if(CMAKE_BUILD_TYPE STREQUAL Release)
+#     MESSAGE(STATUS "Do minimal size release stuff")
+#     FIND_PROGRAM(UPX_EXECUTABLE V:/upx-3.96-win64/upx.exe)
+#     ADD_CUSTOM_COMMAND(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+#     COMMAND ${UPX_EXECUTABLE} $<TARGET_FILE:${CMAKE_PROJECT_NAME}>
+#     COMMENT "Running UPX packer ..."
+#     )
+# endif()
 
 
 
@@ -175,7 +210,8 @@ target_link_libraries(
 	this_project
 #    ${wxWidgets_LIBRARIES}
     ${Boost_LIBRARIES}
-    sqlite
+#    sqlite
+    ${SQLite3_LIBRARIES}
     shlwapi
     version
     oleacc
