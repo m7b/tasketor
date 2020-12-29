@@ -6,6 +6,16 @@ SET(VERSION_DEV_STAGE "\" (Pre-alpha)\"")
 #SET(VERSION_DEV_STAGE "\" (Beta)\"")
 #SET(VERSION_DEV_STAGE "")
 
+if(WIN32)
+    # for Windows operating system in general
+	include("OSWindows.cmake")
+endif()
+
+if(UNIX AND NOT APPLE)
+    # for Linux, BSD, Solaris, Minix
+	include("OSLinux.cmake")
+endif()
+
 
 
 CONFIGURE_FILE(
