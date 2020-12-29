@@ -6,16 +6,6 @@ SET(VERSION_DEV_STAGE "\" (Pre-alpha)\"")
 #SET(VERSION_DEV_STAGE "\" (Beta)\"")
 #SET(VERSION_DEV_STAGE "")
 
-if(WIN32)
-    # for Windows operating system in general
-	include("OSWindows.cmake")
-endif()
-
-if(UNIX AND NOT APPLE)
-    # for Linux, BSD, Solaris, Minix
-	include("OSLinux.cmake")
-endif()
-
 
 
 CONFIGURE_FILE(
@@ -25,6 +15,20 @@ CONFIGURE_FILE(
 
 LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/nsis")
+
+
+
+
+if(WIN32)
+    # for Windows operating system in general
+	include("cmake/OSWindows.cmake")
+endif()
+
+if(UNIX AND NOT APPLE)
+    # for Linux, BSD, Solaris, Minix
+	include("cmake/OSLinux.cmake")
+endif()
+
 
 # ADD_SUBDIRECTORY(doc)
 
