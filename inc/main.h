@@ -9,7 +9,7 @@
  * License:
  **************************************************************/
 
-#include "spdlog/sinks/basic_file_sink.h"
+#include "spdlog/sinks/base_sink.h"
 
 
 #include <boost/locale.hpp>

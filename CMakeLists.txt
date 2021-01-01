@@ -37,68 +37,56 @@ endif()
 # ExternalProject CMake module
 include(ExternalProject)
 
-set(SPDLOG_PATH ${PROJECT_BINARY_DIR}/third_party/spdlog)
-set(SPDLOG_INSTALL_PREFIX ${SPDLOG_PATH}/install)
 ExternalProject_Add(spdlog
-    PREFIX ${SPDLOG_PATH}
-    GIT_REPOSITORY https://github.com/gabime/spdlog
-    GIT_TAG 22a169bc319ac06948e7ee0be6b9b0ac81386604
-    GIT_PROGRESS ON
-    CMAKE_GENERATOR ${CMAKE_GENERATOR}
-    CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
-    CMAKE_ARGS
-        -DCMAKE_INSTALL_MESSAGE=LAZY
-    CMAKE_CACHE_ARGS
-        -DSPDLOG_BUILD_EXAMPLE:BOOL=OFF
-        -DSPDLOG_BUILD_BENCH:BOOL=OFF
-        -DSPDLOG_BUILD_TESTS:BOOL=OFF
-        -DCMAKE_INSTALL_PREFIX:PATH=${SPDLOG_INSTALL_PREFIX}
+  PREFIX spdlog
+  #--Download step--------------
+  GIT_REPOSITORY https://github.com/gabime/spdlog.git
+  GIT_SHALLOW 1
+  #--Configure step-------------
+  CONFIGURE_COMMAND ""
+  #--Build step-----------------
+  BUILD_COMMAND ""
+  #--Install step---------------
+  UPDATE_COMMAND ""
+  INSTALL_COMMAND ""
+  LOG_DOWNLOAD ON
 )
+LIST(APPEND THIRD_PARTY_INC_DIRS "${CMAKE_CURRENT_BINARY_DIR}/spdlog/src/spdlog/include")
+
+ExternalProject_Add(sqlite
+  PREFIX sqlite
+  #--Download step--------------
+  URL https://www.sqlite.org/2020/sqlite-amalgamation-3340000.zip
+  URL_HASH SHA3_256=4ccbeb3abc7a338a7e7e40f94e0e41d5ceb7c0832fa30ffc861094142f5726af
+  #--Configure step-------------
+  CONFIGURE_COMMAND ""
+  #--Build step-----------------
+  BUILD_COMMAND ""
+  #--Install step---------------
+  UPDATE_COMMAND ""
+  INSTALL_COMMAND ""
+  LOG_DOWNLOAD ON
+)
+LIST(APPEND THIRD_PARTY_INC_DIRS "${CMAKE_CURRENT_BINARY_DIR}/sqlite/src/sqlite")
 
 
 
 
 
-
-
-
-## wxWidgets
-#SET(wxWidgets_ROOT_DIR "W:/wxWidgets-3.0.5.1")
-#SET(wxWidgets_LIB_DIR "W:/wxWidgets-3.0.5.1/lib/gcc_lib")
-#SET(wxWidgets_CONFIGURATION mswu)
-#FIND_PACKAGE(wxWidgets 3.0.5 REQUIRED ribbon aui propgrid richtext adv html core xml base)
-#INCLUDE("${wxWidgets_USE_FILE}")
-
-
-## Boost
-#SET(Boost_DEBUG ON)
-#SET(Boost_COMPILER "-mgw92")
-SET(Boost_ARCHITECTURE "-x64")
-SET(BOOST_ROOT "W:/boost_1_74_0")
-SET(BOOST_INCLUDEDIR "W:/boost_1_74_0")
-SET(BOOST_LIBRARYDIR "W:/boost_1_74_0/stage/lib")
-SET(Boost_USE_STATIC_LIBS        ON)
-SET(Boost_USE_MULTITHREADED      ON)
-SET(Boost_USE_STATIC_RUNTIME    OFF)
-FIND_PACKAGE(Boost 1.74.0 REQUIRED COMPONENTS filesystem date_time locale)
-
-
-FIND_PACKAGE(SQLite3 REQUIRED)
 
 
 # SET( SQLITE_INC     "W:/sqlite-amalgamation-3330000")
-SET( SPDLOG_INC     "${SPDLOG_PATH}")
+#SET( SPDLOG_INC     "${SPDLOG_PATH}")
 
 
 # add the binary tree to the search path for include files
 # so that we will find TutorialConfig.h
 include_directories("${CMAKE_CURRENT_BINARY_DIR}"
                     "${PROJECT_SOURCE_DIR}/inc"
-#                    "${PROJECT_SOURCE_DIR}/wxfb"
-                    "${Boost_INCLUDE_DIRS}"
-                    "${SQLite3_INCLUDE_DIRS}"
-#                    "${SQLITE_INC}"
-                    "${SPDLOG_INC}"
+#                    "${Boost_INCLUDE_DIRS}"
+#                    "${SQLite3_INCLUDE_DIRS}"
+#                    "${SPDLOG_INC}"
+                     "${THIRD_PARTY_INC_DIRS}"
 )
 
 
@@ -109,11 +97,7 @@ add_library(
     src/C_Project.cpp
 )
 
-# add_library(
-#     sqlite
-#     ${SQLITE_INC}/sqlite3.c
-# )
-#set_source_files_properties(${SQLITE_INC}/sqlite3.c PROPERTIES COMPILE_FLAGS "-O3 -Wno-unused-but-set-variable -DSQLITE_DQS=0")
+
 
 
 # add the executable
@@ -148,15 +132,7 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC $<$<CONFIG:Release>:wxDE
 target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC $<$<CONFIG:Debug>:wxDEBUG_LEVEL=1>)
 
 
-# # a custom target that is always built
-# SET(SVN_HEADER_TMPL ${PROJECT_SOURCE_DIR}/inc/svn_version.tmpl)
-# SET(SVN_HEADER_H    ${CMAKE_CURRENT_BINARY_DIR}/svn_version.h)
-# ADD_CUSTOM_TARGET(
-    # svnheader
-    # ALL
-    # COMMAND subwcrev ${PROJECT_SOURCE_DIR} ${SVN_HEADER_TMPL} ${SVN_HEADER_H} -q
-    # COMMENT "Write subversion information in header file: ${SVN_HEADER_H}"
-# )
+
 
 
 # # generate CHANGELOG from *.md to *.html (on change)
@@ -192,18 +168,7 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC $<$<CONFIG:Debug>:wxDEBU
 # SET_PROPERTY(SOURCE res/resource.rc APPEND PROPERTY OBJECT_DEPENDS ${TOOLCHAIN_HTML})
 
 
-# # generate SVNLog (always)
-# FIND_PROGRAM(SVN_EXECUTABLE svn)
-# SET(SVNLOG_NEW ${CMAKE_CURRENT_BINARY_DIR}/svnlog_new.txt)
-# SET(SVNLOG     ${CMAKE_CURRENT_BINARY_DIR}/svnlog.txt)
-# ADD_CUSTOM_TARGET(
-    # svnlog
-	# ALL
-    # COMMAND ${SVN_EXECUTABLE} log ${PROJECT_SOURCE_DIR} -l 20 -r HEAD:1 > ${SVNLOG_NEW}
-    # COMMAND ${CMAKE_COMMAND} -E copy_if_different ${SVNLOG_NEW} ${SVNLOG}
-    # COMMENT "Create SVN-log file"
-# )
-# SET_PROPERTY(SOURCE res/svn.rc APPEND PROPERTY OBJECT_DEPENDS ${SVNLOG})
+
 
 
 
@@ -223,7 +188,7 @@ target_link_libraries(
     ${CMAKE_PROJECT_NAME}
 	this_project
 #    ${wxWidgets_LIBRARIES}
-    ${Boost_LIBRARIES}
+#    ${Boost_LIBRARIES}
 #    sqlite
     ${SQLite3_LIBRARIES}
     shlwapi
@@ -236,5 +201,5 @@ target_link_libraries(
 )
 
 
-ADD_SUBDIRECTORY(test)
+#ADD_SUBDIRECTORY(test)
 ADD_SUBDIRECTORY(nsis)
