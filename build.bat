@@ -41,23 +41,26 @@ IF NOT [%1]==[]             GOTO HELP
 GOTO BUILD
 
 :HELP
-ECHO Perform a build or a clean.
+ECHO Perform a build or a clean. By default without any options, this script performs
+ECHO a release build only (like %~nx0 -r).
 ECHO:
-ECHO bootstrap ^<command^>
+ECHO %~nx0 ^<options^>
 ECHO:
 ECHO Available options:
 ECHO:
-ECHO   -r, --release      Build a release application in build directory.
-ECHO   -d, --debug        Build a debug application in build directory.
-ECHO   -p, --package      Build an installer package.
-ECHO   -cd, --codeblocks  Creates a code blocks project file.
-ECHO   -doc, --document   Creates doxygen document
-ECHO   -c, --clean        Deletes the build directory.
+ECHO   -h,   --help        Show this help message.
+ECHO   -r,   --release     Build a release application in build directory.
+ECHO   -d,   --debug       Build a debug application in build directory.
+ECHO   -p,   --package     Build an installer package.
+ECHO   -cb,  --codeblocks  Creates a code blocks project file.
+ECHO   -doc, --document    Creates doxygen document
+ECHO   -c,   --clean       Deletes the build directory.
 ECHO:
 ECHO:
 ECHO Example usage:
 ECHO:
-ECHO bootstrap -d -cb (create a debug codeblocks project and build)
+ECHO %~nx0 -d -cb (create a debug codeblocks project and build)
+ECHO:
 GOTO EXIT
 
 :BUILDRELEASE

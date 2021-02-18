@@ -9,11 +9,10 @@
  * License:
  **************************************************************/
 
-#include "spdlog/sinks/base_sink.h"
-
+#include "spdlog/sinks/basic_file_sink.h"
 
 #include <boost/locale.hpp>
-#include "boost/date_time/gregorian/gregorian.hpp"
+#include <boost/date_time/gregorian/gregorian.hpp>
 
 #include "C_Project.h"
 

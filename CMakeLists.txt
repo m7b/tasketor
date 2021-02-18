@@ -1,21 +1,27 @@
-CMAKE_MINIMUM_REQUIRED( VERSION 3.9.6 )
+cmake_minimum_required(VERSION 3.14...3.19)
 
-PROJECT(tasketor VERSION 0.0.0)
-SET(VERSION_DEV_STAGE "\" (Pre-alpha)\"")
-#SET(VERSION_DEV_STAGE "\" (Alpha)\"")
-#SET(VERSION_DEV_STAGE "\" (Beta)\"")
-#SET(VERSION_DEV_STAGE "")
+if(${CMAKE_VERSION} VERSION_LESS 3.12)
+    cmake_policy(VERSION ${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION})
+endif()
+
+project(tasketor VERSION 0.0.0
+                 DESCRIPTION "Helping assigning periodicaly tasks"
+                 LANGUAGES C CXX)
+
+
+set(PROJECT_VERSION_DEV_STAGE "\" (Pre-alpha)\"")
+#SET(PROJECT_VERSION_DEV_STAGE "\" (Alpha)\"")
+#SET(PROJECT_VERSION_DEV_STAGE "\" (Beta)\"")
+#SET(PROJECT_VERSION_DEV_STAGE "")
 
 
 
-CONFIGURE_FILE(
-  ${PROJECT_SOURCE_DIR}/inc/version.h.in
-  ${CMAKE_CURRENT_BINARY_DIR}/version.h
+configure_file(
+    ${PROJECT_SOURCE_DIR}/include/version.h.in
+    ${PROJECT_BINARY_DIR}/version.h
 )
 
-LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
-LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/nsis")
-
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 
 
@@ -34,42 +40,85 @@ endif()
 
 
 
-# ExternalProject CMake module
-include(ExternalProject)
+include(FetchContent)
+SET(FETCHCONTENT_QUIET OFF)
+SET(GIT_SHALLOW ON)
+SET(GIT_PROGRESS ON)
 
-ExternalProject_Add(spdlog
-  PREFIX spdlog
-  #--Download step--------------
-  GIT_REPOSITORY https://github.com/gabime/spdlog.git
-  GIT_SHALLOW 1
-  #--Configure step-------------
-  CONFIGURE_COMMAND ""
-  #--Build step-----------------
-  BUILD_COMMAND ""
-  #--Install step---------------
-  UPDATE_COMMAND ""
-  INSTALL_COMMAND ""
-  LOG_DOWNLOAD ON
-)
-LIST(APPEND THIRD_PARTY_INC_DIRS "${CMAKE_CURRENT_BINARY_DIR}/spdlog/src/spdlog/include")
+FetchContent_Declare(
+    sqlite3
+    URL                https://sqlite.org/2021/sqlite-amalgamation-3340100.zip
+    URL_HASH           SHA3_256=be0d07b08969aa775c628f214c723955c0bfe880d72c3289a1ff54ad779b15d3
+    )
 
-ExternalProject_Add(sqlite
-  PREFIX sqlite
-  #--Download step--------------
-  URL https://www.sqlite.org/2020/sqlite-amalgamation-3340000.zip
-  URL_HASH SHA3_256=4ccbeb3abc7a338a7e7e40f94e0e41d5ceb7c0832fa30ffc861094142f5726af
-  #--Configure step-------------
-  CONFIGURE_COMMAND ""
-  #--Build step-----------------
-  BUILD_COMMAND ""
-  #--Install step---------------
-  UPDATE_COMMAND ""
-  INSTALL_COMMAND ""
-  LOG_DOWNLOAD ON
-)
-LIST(APPEND THIRD_PARTY_INC_DIRS "${CMAKE_CURRENT_BINARY_DIR}/sqlite/src/sqlite")
+FetchContent_MakeAvailable(sqlite3)
+
+FetchContent_Declare(
+    spdlog
+    GIT_REPOSITORY     https://github.com/gabime/spdlog.git
+    GIT_TAG            v1.8.2
+    GIT_SHALLOW        TRUE
+    GIT_PROGRESS       TRUE
+    )
+
+FetchContent_MakeAvailable(spdlog)
+
+set(BOOST_ENABLE_CMAKE ON)
+FetchContent_Declare(
+    boostorg
+    GIT_REPOSITORY     https://github.com/boostorg/boost.git
+    GIT_TAG            boost-1.75.0
+    GIT_SHALLOW        TRUE
+    GIT_PROGRESS       TRUE
+    )
+
+#FetchContent_MakeAvailable(boostorg)
+FetchContent_GetProperties(boostorg)
+
+if(NOT boostorg_POPULATED)
+    message("BOOST NOT POPULATED *********************************************************")
+    FetchContent_Populate(boostorg)
+    Execute_Process(
+        COMMAND copy patch
+        WORKING_DIRECTORY ${boostorg_SOURCE_DIR}
+    )
+    Execute_Process(
+        COMMAND bootstrap.bat gcc
+        WORKING_DIRECTORY ${boostorg_SOURCE_DIR}
+    )
+    Execute_Process(
+        COMMAND b2 headers
+        WORKING_DIRECTORY ${boostorg_SOURCE_DIR}
+    )
+    Execute_Process(
+        COMMAND b2 toolset=gcc address-model=64 --with-filesystem --with-date_time --with-test --with-locale
+        WORKING_DIRECTORY ${boostorg_SOURCE_DIR}
+    )
+    message("BOOST POPULATED *********************************************************")
+endif()
 
 
+# include(ExternalProject)
+
+
+
+
+# ExternalProject_Add(boost
+  # PREFIX boost
+  # #--Download step--------------
+  # URL https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.bz2
+  # URL_HASH SHA256=953db31e016db7bb207f11432bef7df100516eeb746843fa0486a222e3fd49cb
+  # #--Configure step-------------
+  # CONFIGURE_COMMAND bootstrap.bat gcc
+  # #--Build step-----------------
+  # BUILD_COMMAND b2 toolset=gcc address-model=64 --with-filesystem --with-date_time --with-test --with-locale
+  # BUILD_IN_SOURCE 1
+  # #--Install step---------------
+  # UPDATE_COMMAND ""
+  # INSTALL_COMMAND ""
+  # LOG_DOWNLOAD ON
+ # )
+# LIST(APPEND THIRD_PARTY_INC_DIRS "${CMAKE_CURRENT_BINARY_DIR}/boost/src/boost")
 
 
 
@@ -82,11 +131,42 @@ LIST(APPEND THIRD_PARTY_INC_DIRS "${CMAKE_CURRENT_BINARY_DIR}/sqlite/src/sqlite"
 # add the binary tree to the search path for include files
 # so that we will find TutorialConfig.h
 include_directories("${CMAKE_CURRENT_BINARY_DIR}"
-                    "${PROJECT_SOURCE_DIR}/inc"
+                    "${PROJECT_SOURCE_DIR}/include"
 #                    "${Boost_INCLUDE_DIRS}"
-#                    "${SQLite3_INCLUDE_DIRS}"
-#                    "${SPDLOG_INC}"
-                     "${THIRD_PARTY_INC_DIRS}"
+                    "${boostorg_SOURCE_DIR}"
+                    # "${boostorg_SOURCE_DIR}/libs/locale/include"
+                    # "${boostorg_SOURCE_DIR}/libs/config/include"
+                    # "${boostorg_SOURCE_DIR}/libs/assert/include"
+                    # "${boostorg_SOURCE_DIR}/libs/iterator/include"
+                    # "${boostorg_SOURCE_DIR}/libs/mpl/include"
+                    # "${boostorg_SOURCE_DIR}/libs/preprocessor/include"
+                    # "${boostorg_SOURCE_DIR}/libs/type_traits/include"
+                    # "${boostorg_SOURCE_DIR}/libs/static_assert/include"
+                    # "${boostorg_SOURCE_DIR}/libs/core/include"
+                    # "${boostorg_SOURCE_DIR}/libs/detail/include"
+                    # "${boostorg_SOURCE_DIR}/libs/smart_ptr/include"
+                    # "${boostorg_SOURCE_DIR}/libs/throw_exception/include"
+                    # "${boostorg_SOURCE_DIR}/libs/function/include"
+                    # "${boostorg_SOURCE_DIR}/libs/integer/include"
+                    # "${boostorg_SOURCE_DIR}/libs/type_index/include"
+                    # "${boostorg_SOURCE_DIR}/libs/container_hash/include"
+                    # "${boostorg_SOURCE_DIR}/libs/bind/include"
+                    # "${boostorg_SOURCE_DIR}/libs/date_time/include"
+                    # "${boostorg_SOURCE_DIR}/libs/utility/include"
+                    # "${boostorg_SOURCE_DIR}/libs/io/include"
+                    # "${boostorg_SOURCE_DIR}/libs/algorithm/include"
+                    # "${boostorg_SOURCE_DIR}/libs/range/include"
+                    # "${boostorg_SOURCE_DIR}/libs/concept_check/include"
+                    # "${boostorg_SOURCE_DIR}/libs/lexical_cast/include"
+                    # "${boostorg_SOURCE_DIR}/libs/numeric/conversion/include"
+                    # "${boostorg_SOURCE_DIR}/libs/array/include"
+                    # "${boostorg_SOURCE_DIR}/libs/container/include"
+                    # "${boostorg_SOURCE_DIR}/libs/move/include"
+                    # "${boostorg_SOURCE_DIR}/libs/math/include"
+                    # "${boostorg_SOURCE_DIR}/libs/predef/include"
+                    # "${boostorg_SOURCE_DIR}/libs/tokenizer/include"
+                    "${sqlite3_SOURCE_DIR}"
+                    "${spdlog_SOURCE_DIR}/include"
 )
 
 
@@ -95,8 +175,8 @@ add_library(
     this_project
     src/C_DbHandle.cpp
     src/C_Project.cpp
+	${sqlite3_SOURCE_DIR}/sqlite3.c
 )
-
 
 
 
@@ -181,6 +261,15 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC $<$<CONFIG:Debug>:wxDEBU
 #     )
 # endif()
 
+message("tasketor_BINARY_DIR is ${OpenChemistry_BINARY_DIR}")
+message("OpenChemistry_DEFAULT_ARGS is ${OpenChemistry_DEFAULT_ARGS}")
+message("OpenChemistry_THIRDPARTYLIBS_ARGS is ${OpenChemistry_THIRDPARTYLIBS_ARGS}")
+message("OpenChemistry_INSTALL_PREFIX is ${OpenChemistry_INSTALL_PREFIX}")
+message("sqlite3_SOURCE_DIR is ${sqlite3_SOURCE_DIR}")
+message("spdlog_SOURCE_DIR is ${spdlog_SOURCE_DIR}")
+message("boostorg_SOURCE_DIR is ${boostorg_SOURCE_DIR}")
+
+
 
 
 # link libraries
@@ -190,6 +279,7 @@ target_link_libraries(
 #    ${wxWidgets_LIBRARIES}
 #    ${Boost_LIBRARIES}
 #    sqlite
+    ${boostorg_SOURCE_DIR}/stage/lib/libboost_locale-mgw9-mt-x64-1_75.a
     ${SQLite3_LIBRARIES}
     shlwapi
     version
@@ -201,5 +291,6 @@ target_link_libraries(
 )
 
 
+
+
 #ADD_SUBDIRECTORY(test)
-ADD_SUBDIRECTORY(nsis)
