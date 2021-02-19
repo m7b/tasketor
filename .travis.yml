@@ -36,7 +36,7 @@ matrix:
     compiler: gcc
     
     install:    
-      - ./scripts/ci/update_cmake.sh
+      - bash scripts/ci/update_cmake.sh
     
     script:
       - cmake -DCI_BUILD:BOOL=ON -DCOVERAGE:BOOL=OFF -DCMAKE_BUILD_TYPE=Release ..
