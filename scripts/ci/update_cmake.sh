@@ -1,4 +1,9 @@
 #!/bin/bash
+# fail script immediately on any errors in external commands
+set -e
+
+source travis_retry.sh
+
 
 # first we create a directory for the CMake binaries
 DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
