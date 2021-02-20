@@ -2,7 +2,7 @@
 # fail script immediately on any errors in external commands
 set -e
 
-source travis_retry.sh
+source scripts/ci/travis_retry.sh
 
 
 # first we create a directory for the CMake binaries
