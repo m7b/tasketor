@@ -95,6 +95,18 @@ if(NOT boostorg_POPULATED)
         WORKING_DIRECTORY ${boostorg_SOURCE_DIR}
     )
     message("BOOST POPULATED *********************************************************")
+	
+	SET(Boost_DEBUG ON)
+	SET(Boost_ARCHITECTURE "-x64")
+	SET(Boost_USE_STATIC_LIBS        ON)
+	SET(Boost_USE_MULTITHREADED      ON)
+	SET(Boost_USE_STATIC_RUNTIME    OFF)
+	SET(BOOST_ROOT ${boostorg_SOURCE_DIR})
+	SET(BOOST_INCLUDEDIR ${boostorg_SOURCE_DIR})
+    SET(BOOST_LIBRARYDIR ${boostorg_SOURCE_DIR}/stage/lib)
+	#FIND_PACKAGE(Boost 1.75.0 REQUIRED filesystem date_time test locale)
+	FIND_PACKAGE(Boost 1.75.0 REQUIRED filesystem date_time locale)
+	
 endif()
 
 
@@ -134,37 +146,6 @@ include_directories("${CMAKE_CURRENT_BINARY_DIR}"
                     "${PROJECT_SOURCE_DIR}/include"
 #                    "${Boost_INCLUDE_DIRS}"
                     "${boostorg_SOURCE_DIR}"
-                    # "${boostorg_SOURCE_DIR}/libs/locale/include"
-                    # "${boostorg_SOURCE_DIR}/libs/config/include"
-                    # "${boostorg_SOURCE_DIR}/libs/assert/include"
-                    # "${boostorg_SOURCE_DIR}/libs/iterator/include"
-                    # "${boostorg_SOURCE_DIR}/libs/mpl/include"
-                    # "${boostorg_SOURCE_DIR}/libs/preprocessor/include"
-                    # "${boostorg_SOURCE_DIR}/libs/type_traits/include"
-                    # "${boostorg_SOURCE_DIR}/libs/static_assert/include"
-                    # "${boostorg_SOURCE_DIR}/libs/core/include"
-                    # "${boostorg_SOURCE_DIR}/libs/detail/include"
-                    # "${boostorg_SOURCE_DIR}/libs/smart_ptr/include"
-                    # "${boostorg_SOURCE_DIR}/libs/throw_exception/include"
-                    # "${boostorg_SOURCE_DIR}/libs/function/include"
-                    # "${boostorg_SOURCE_DIR}/libs/integer/include"
-                    # "${boostorg_SOURCE_DIR}/libs/type_index/include"
-                    # "${boostorg_SOURCE_DIR}/libs/container_hash/include"
-                    # "${boostorg_SOURCE_DIR}/libs/bind/include"
-                    # "${boostorg_SOURCE_DIR}/libs/date_time/include"
-                    # "${boostorg_SOURCE_DIR}/libs/utility/include"
-                    # "${boostorg_SOURCE_DIR}/libs/io/include"
-                    # "${boostorg_SOURCE_DIR}/libs/algorithm/include"
-                    # "${boostorg_SOURCE_DIR}/libs/range/include"
-                    # "${boostorg_SOURCE_DIR}/libs/concept_check/include"
-                    # "${boostorg_SOURCE_DIR}/libs/lexical_cast/include"
-                    # "${boostorg_SOURCE_DIR}/libs/numeric/conversion/include"
-                    # "${boostorg_SOURCE_DIR}/libs/array/include"
-                    # "${boostorg_SOURCE_DIR}/libs/container/include"
-                    # "${boostorg_SOURCE_DIR}/libs/move/include"
-                    # "${boostorg_SOURCE_DIR}/libs/math/include"
-                    # "${boostorg_SOURCE_DIR}/libs/predef/include"
-                    # "${boostorg_SOURCE_DIR}/libs/tokenizer/include"
                     "${sqlite3_SOURCE_DIR}"
                     "${spdlog_SOURCE_DIR}/include"
 )
@@ -279,7 +260,8 @@ target_link_libraries(
 #    ${wxWidgets_LIBRARIES}
 #    ${Boost_LIBRARIES}
 #    sqlite
-    ${boostorg_SOURCE_DIR}/stage/lib/libboost_locale-mgw9-mt-x64-1_75.a
+	${Boost_LIBRARIES}
+#    ${boostorg_SOURCE_DIR}/stage/lib/libboost_locale-mgw9-mt-x64-1_75.a
     ${SQLite3_LIBRARIES}
     shlwapi
     version
