@@ -78,9 +78,9 @@ FetchContent_GetProperties(boostorg)
 if(NOT boostorg_POPULATED)
     message("BOOST NOT POPULATED *********************************************************")
     FetchContent_Populate(boostorg)
-    Execute_Process(
-        COMMAND copy patch
-        WORKING_DIRECTORY ${boostorg_SOURCE_DIR}
+    file(
+		COPY        ${CMAKE_CURRENT_SOURCE_DIR}/patches/bootstrap.bat
+        DESTINATION ${boostorg_SOURCE_DIR}
     )
     Execute_Process(
         COMMAND bootstrap.bat gcc
