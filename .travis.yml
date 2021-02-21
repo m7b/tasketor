@@ -9,6 +9,10 @@ dist: xenial
 #
 # Build Dependencies
 #
+    
+install:
+  - bash scripts/ci/update_cmake.sh
+
 before_script:
 - mkdir build
 - cd build
@@ -34,9 +38,6 @@ matrix:
           - libboost-all-dev
 
     compiler: gcc
-    
-    install:
-      - bash scripts/ci/update_cmake.sh
 
     script:
       - cmake -DCI_BUILD:BOOL=ON -DCOVERAGE:BOOL=OFF -DCMAKE_BUILD_TYPE=Release ..
@@ -57,9 +58,6 @@ matrix:
           - libboost-all-dev
 
     compiler: gcc
-    
-    install:
-      - bash scripts/ci/update_cmake.sh
     
     script:
       - cmake -DCI_BUILD:BOOL=ON -DCOVERAGE:BOOL=OFF -DCMAKE_BUILD_TYPE=Debug ..
@@ -82,9 +80,6 @@ matrix:
           - libboost-all-dev
 
     compiler: gcc
-    
-    install:
-      - bash scripts/ci/update_cmake.sh
     
     script:
       - export CC=gcc-8
@@ -111,9 +106,6 @@ matrix:
 
     compiler: gcc
     
-    install:
-      - bash scripts/ci/update_cmake.sh
-    
     script:
       - export CC=gcc-8
       - export CXX=g++-8
@@ -136,9 +128,6 @@ matrix:
           - libboost-all-dev
 
     compiler: gcc
-    
-    install:
-      - bash scripts/ci/update_cmake.sh
     
     script:
       - pip install --user cpp-coveralls
