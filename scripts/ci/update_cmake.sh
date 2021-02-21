@@ -27,7 +27,8 @@ travis_retry() {
 DEPS_DIR="${TRAVIS_BUILD_DIR}/deps"
 mkdir ${DEPS_DIR} && cd ${DEPS_DIR}
 # we use wget to fetch the cmake binaries
-travis_retry wget --no-check-certificate https://cmake.org/files/v3.20/cmake-3.20.0-rc1-linux-x86_64.tar.gz
+#travis_retry wget --no-check-certificate https://cmake.org/files/v3.20/cmake-3.20.0-rc1-linux-x86_64.tar.gz
+wget --no-check-certificate https://cmake.org/files/v3.20/cmake-3.20.0-rc1-linux-x86_64.tar.gz
 # this is optional, but useful:
 # do a quick md5 check to ensure that the archive we downloaded did not get compromised
 echo "455ff919e07f3afb938abd3c0ee7f234b690699f4980065f6001407995b0e6b4 *cmake-3.20.0-rc1-linux-x86_64.tar.gz" > cmake_sha256.txt
