@@ -35,7 +35,8 @@ echo "455ff919e07f3afb938abd3c0ee7f234b690699f4980065f6001407995b0e6b4 *cmake-3.
 sha256sum -c cmake_sha256.txt
 # extract the binaries; the output here is quite lengthy,
 # so we swallow it to not clutter up the travis console
-tar -xvf cmake-3.20.0-rc1-linux-x86_64.tar.gz > /dev/null
+#tar -xvf cmake-3.20.0-rc1-linux-x86_64.tar.gz > /dev/null
+tar -xvf cmake-3.20.0-rc1-linux-x86_64.tar.gz
 mv cmake-3.20.0-rc1-linux-x86_64 cmake-install
 # add both the top-level directory and the bin directory from the archive
 # to the system PATH. By adding it to the front of the path we hide the
