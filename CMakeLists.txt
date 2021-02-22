@@ -97,6 +97,7 @@ if(NOT boostorg_POPULATED)
     message("BOOST POPULATED *********************************************************")
 	
 	SET(Boost_DEBUG ON)
+    set(Boost_NO_SYSTEM_PATHS ON)
 	SET(Boost_ARCHITECTURE "-x64")
 	SET(Boost_USE_STATIC_LIBS        ON)
 	SET(Boost_USE_MULTITHREADED      ON)
