@@ -104,8 +104,7 @@ if(NOT boostorg_POPULATED)
 	SET(BOOST_ROOT ${boostorg_SOURCE_DIR})
 	SET(BOOST_INCLUDEDIR ${boostorg_SOURCE_DIR})
     SET(BOOST_LIBRARYDIR ${boostorg_SOURCE_DIR}/stage/lib)
-	#FIND_PACKAGE(Boost 1.75.0 REQUIRED filesystem date_time test locale)
-	FIND_PACKAGE(Boost 1.75.0 REQUIRED filesystem date_time locale)
+	FIND_PACKAGE(Boost 1.75.0 REQUIRED filesystem date_time locale unit_test_framework)
 	
 endif()
 
