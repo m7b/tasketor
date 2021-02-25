@@ -36,6 +36,4 @@ build_script:
 #---------------------------------#
 
 # to disable automatic builds
-build:
-#  off
-  verbosity: normal
+build: off
