@@ -82,7 +82,7 @@ if(NOT boostorg_POPULATED)
     if(WIN32)
         # for Windows operating system in general
         message("BOOST set booststrap command for WINDOWS ********************")
-        set(boost_bootstrap_cmd bootstrap.bat gcc)
+        set(boost_bootstrap_cmd "bootstrap.bat gcc")
         set(boost_b2_cmd        b2)
     endif()
 
@@ -272,27 +272,50 @@ message("boostorg_SOURCE_DIR is ${boostorg_SOURCE_DIR}")
 
 
 
+if(WIN32)
+# for Windows operating system in general
 
-# link libraries
-target_link_libraries(
-    ${CMAKE_PROJECT_NAME}
-	this_project
-#    ${wxWidgets_LIBRARIES}
-#    ${Boost_LIBRARIES}
-#    sqlite
-	${Boost_LIBRARIES}
-#    ${boostorg_SOURCE_DIR}/stage/lib/libboost_locale-mgw9-mt-x64-1_75.a
-    ${SQLite3_LIBRARIES}
-##    shlwapi
-##    version
-##    oleacc
-    -ldl       #linux
-    -lpthread  #linux
-    -static
-    -static-libgcc
-    -static-libstdc++
-    $<$<CONFIG:Release>:-s>
-)
+
+	# link libraries
+	target_link_libraries(
+		${CMAKE_PROJECT_NAME}
+		this_project
+		${Boost_LIBRARIES}
+		${SQLite3_LIBRARIES}
+		##    shlwapi
+		##    version
+		##    oleacc
+		-static
+		-static-libgcc
+		-static-libstdc++
+		$<$<CONFIG:Release>:-s>
+	)		
+endif()
+
+if(UNIX AND NOT APPLE)
+# for Linux operating system in general
+
+	# link libraries
+	target_link_libraries(
+		${CMAKE_PROJECT_NAME}
+		this_project
+		${Boost_LIBRARIES}
+		${SQLite3_LIBRARIES}
+		##    shlwapi
+		##    version
+		##    oleacc
+		-ldl       #linux
+		-lpthread  #linux
+		-static
+		-static-libgcc
+		-static-libstdc++
+		$<$<CONFIG:Release>:-s>
+	)
+
+
+endif()
+
+
 
 
 
