@@ -28,7 +28,7 @@ shallow_clone: true
 install:
 
 build_script:
-  - cmd: build.bat
+  - build.bat
 
 
 #---------------------------------#
