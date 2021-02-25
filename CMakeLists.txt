@@ -63,7 +63,7 @@ FetchContent_Declare(
 
 FetchContent_MakeAvailable(spdlog)
 
-set(BOOST_ENABLE_CMAKE ON)
+#set(BOOST_ENABLE_CMAKE ON)
 FetchContent_Declare(
     boostorg
     GIT_REPOSITORY     https://github.com/boostorg/boost.git
@@ -115,9 +115,9 @@ if(NOT boostorg_POPULATED)
     )
     message("BOOST POPULATED *********************************************************")
 	
-	SET(Boost_DEBUG ON)
-    set(Boost_NO_SYSTEM_PATHS ON)
-	SET(Boost_ARCHITECTURE "-x64")
+        set(Boost_DEBUG ON)
+        set(Boost_NO_SYSTEM_PATHS ON)
+	set(Boost_ARCHITECTURE "-x64")
 	SET(Boost_USE_STATIC_LIBS        ON)
 	SET(Boost_USE_MULTITHREADED      ON)
 	SET(Boost_USE_STATIC_RUNTIME    OFF)
@@ -129,34 +129,12 @@ if(NOT boostorg_POPULATED)
 endif()
 
 
-# include(ExternalProject)
-
-
-
-
-# ExternalProject_Add(boost
-  # PREFIX boost
-  # #--Download step--------------
-  # URL https://dl.bintray.com/boostorg/release/1.75.0/source/boost_1_75_0.tar.bz2
-  # URL_HASH SHA256=953db31e016db7bb207f11432bef7df100516eeb746843fa0486a222e3fd49cb
-  # #--Configure step-------------
-  # CONFIGURE_COMMAND bootstrap.bat gcc
-  # #--Build step-----------------
-  # BUILD_COMMAND b2 toolset=gcc address-model=64 --with-filesystem --with-date_time --with-test --with-locale
-  # BUILD_IN_SOURCE 1
-  # #--Install step---------------
-  # UPDATE_COMMAND ""
-  # INSTALL_COMMAND ""
-  # LOG_DOWNLOAD ON
- # )
-# LIST(APPEND THIRD_PARTY_INC_DIRS "${CMAKE_CURRENT_BINARY_DIR}/boost/src/boost")
 
 
 
 
 
-# SET( SQLITE_INC     "W:/sqlite-amalgamation-3330000")
-#SET( SPDLOG_INC     "${SPDLOG_PATH}")
+
 
 
 # add the binary tree to the search path for include files
