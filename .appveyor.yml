@@ -29,17 +29,17 @@ shallow_clone: true
 
 # environment variables
 environment:
-  MINGW_DIR: C:\CPP\compiler\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin
+#  MINGW_DIR: C:\CPP\compiler\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin
 
 # scripts that run after cloning repository
 install:
   # begin prepare for simulate local dev environment
-  - mkdir C:\CPP
-  - mkdir C:\CPP\compiler
-  - mkdir C:\CPP\tools
-  - move C:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0 C:\CPP\compiler
-  - move C:\msys64 C:\CPP\tools
-  - set PATH=%MINGW_DIR%;%PATH%
+#  - mkdir C:\CPP
+#  - mkdir C:\CPP\compiler
+#  - mkdir C:\CPP\tools
+#  - move C:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0 C:\CPP\compiler
+#  - move C:\msys64 C:\CPP\tools
+#  - set PATH=%MINGW_DIR%;%PATH%
   # end prepare for sim local env
   
   # Install Pandoc, doxygen, graphviz, UPX
