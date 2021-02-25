@@ -26,8 +26,6 @@ shallow_clone: true
 
 # scripts that run after cloning repository
 install:
-
-build_script:
   - mkdir build
   - cd build
   - cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ..
