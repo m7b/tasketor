@@ -15,21 +15,53 @@ branches:
 #---------------------------------#
 
 # Build worker image (VM template)
-image: Visual Studio 2015
+image: Visual Studio 2019
 
 # scripts that are called at very beginning, before repo cloning
 init:
   - git config --global core.autocrlf true
+  # prepare for simulate local dev environment
+  - mkdir C:\CPP
+  - mkdir C:\CPP\compiler
+  - mkdir C:\CPP\tools
+  - move C:\mingw-w64\x86_64-8.1.0-posix-seh-rt_v6-rev0 C:\CPP\compiler
+  - move C:\msys64 C:\CPP\tools
+  - set PATH=%MINGW_DIR%;%PATH%
+  # Update keyring
+  - C:\CPP\tools\msys64\usr\bin\bash -lc "curl -O http://repo.msys2.org/msys/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz"
+  - C:\CPP\tools\msys64\usr\bin\bash -lc "curl -O http://repo.msys2.org/msys/x86_64/msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz.sig"
+  - C:\CPP\tools\msys64\usr\bin\bash -lc "pacman-key --verify msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz.sig"
+  - C:\CPP\tools\msys64\usr\bin\bash -lc "pacman --noconfirm -U msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz"
+  # Update MSYS2
+  - C:\CPP\tools\msys64\usr\bin\bash -lc "pacman --noconfirm -Syuu"  # Core update
+  - C:\CPP\tools\msys64\usr\bin\bash -lc "pacman --noconfirm -Syuu"  # Normal update
 
 # fetch repository as zip archive. default is "false"
 shallow_clone: true
 
+# set clone depth
+clone_depth: 1
+
+# environment variables
+environment:
+  MINGW_DIR: C:\CPP\compiler\x86_64-8.1.0-posix-seh-rt_v6-rev0\mingw64\bin
+
 # scripts that run after cloning repository
 install:
+  # Install MSYS2 libmariadb, boost
+  - C:\CPP\tools\msys64\usr\bin\bash -l -c "pacman -Sy --noconfirm mingw64/mingw-w64-x86_64-libmariadbclient mingw64/mingw-w64-x86_64-boost 2>&1"
+
+build_script:
   - mkdir build
   - cd build
   - cmake -G "MinGW Makefiles" -DCMAKE_SH="CMAKE_SH-NOTFOUND" ..
   - cmake --build .
+  - cd test
+  - ctest
+
+#test_script:
+#  - cd test
+#  - ctest -D Continuous
 
 
 #---------------------------------#
@@ -37,4 +69,4 @@ install:
 #---------------------------------#
 
 # to disable automatic builds
-build: off
+#build: off
