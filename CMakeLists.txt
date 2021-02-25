@@ -78,12 +78,25 @@ FetchContent_GetProperties(boostorg)
 if(NOT boostorg_POPULATED)
     message("BOOST NOT POPULATED *********************************************************")
     FetchContent_Populate(boostorg)
+    
+    if(WIN32)
+        # for Windows operating system in general
+        set(boost_bootstrap_cmd bootstrap.bat gcc)
+    endif()
+
+    if(UNIX AND NOT APPLE)
+        # for Linux, BSD, Solaris, Minix
+        set(boost_bootstrap_cmd bootstrap.sh)
+    endif()
+    
+    
+    
     file(
-		COPY        ${CMAKE_CURRENT_SOURCE_DIR}/patches/bootstrap.bat
+	COPY        ${CMAKE_CURRENT_SOURCE_DIR}/patches/bootstrap.bat
         DESTINATION ${boostorg_SOURCE_DIR}
     )
     Execute_Process(
-        COMMAND bootstrap.bat gcc
+        COMMAND ${boost_bootstrap_cmd}
         WORKING_DIRECTORY ${boostorg_SOURCE_DIR}
     )
     Execute_Process(
