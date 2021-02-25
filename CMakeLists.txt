@@ -96,15 +96,18 @@ if(NOT boostorg_POPULATED)
     message("Bootstrap command is ${boost_bootstrap_cmd}")
     message("b2 command is ${boost_b2_cmd}")
     
-    
     file(
         COPY        ${CMAKE_CURRENT_SOURCE_DIR}/patches/bootstrap.bat
         DESTINATION ${boostorg_SOURCE_DIR}
     )
-    Execute_Process(
-        COMMAND ${boost_bootstrap_cmd}
-        WORKING_DIRECTORY ${boostorg_SOURCE_DIR}
-    )
+    
+    if(NOT EXISTS "${boostorg_SOURCE_DIR}/b2")
+        Execute_Process(
+            COMMAND ${boost_bootstrap_cmd}
+            WORKING_DIRECTORY ${boostorg_SOURCE_DIR}
+        )
+    endif()
+
     Execute_Process(
         COMMAND ${boost_b2_cmd} headers
         WORKING_DIRECTORY ${boostorg_SOURCE_DIR}
@@ -115,16 +118,16 @@ if(NOT boostorg_POPULATED)
     )
     message("BOOST POPULATED *********************************************************")
 	
-        set(Boost_DEBUG ON)
-        set(Boost_NO_SYSTEM_PATHS ON)
-	set(Boost_ARCHITECTURE "-x64")
-	SET(Boost_USE_STATIC_LIBS        ON)
-	SET(Boost_USE_MULTITHREADED      ON)
-	SET(Boost_USE_STATIC_RUNTIME    OFF)
-	SET(BOOST_ROOT ${boostorg_SOURCE_DIR})
-	SET(BOOST_INCLUDEDIR ${boostorg_SOURCE_DIR})
-    SET(BOOST_LIBRARYDIR ${boostorg_SOURCE_DIR}/stage/lib)
-	FIND_PACKAGE(Boost 1.75.0 REQUIRED filesystem date_time locale unit_test_framework)
+#    set(Boost_DEBUG ON)
+#    set(Boost_NO_SYSTEM_PATHS ON)
+#    set(Boost_ARCHITECTURE "-x64")
+    set(Boost_USE_STATIC_LIBS        ON)
+    set(Boost_USE_MULTITHREADED      ON)
+    set(Boost_USE_STATIC_RUNTIME    OFF)
+    set(BOOST_ROOT ${boostorg_SOURCE_DIR})
+#    set(BOOST_INCLUDEDIR ${boostorg_SOURCE_DIR})
+#    set(BOOST_LIBRARYDIR ${boostorg_SOURCE_DIR}/stage/lib)
+    FIND_PACKAGE(Boost 1.75.0 REQUIRED filesystem date_time locale unit_test_framework)
 	
 endif()
 
@@ -240,13 +243,14 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC $<$<CONFIG:Debug>:wxDEBU
 #     )
 # endif()
 
-message("tasketor_BINARY_DIR is ${OpenChemistry_BINARY_DIR}")
-message("OpenChemistry_DEFAULT_ARGS is ${OpenChemistry_DEFAULT_ARGS}")
-message("OpenChemistry_THIRDPARTYLIBS_ARGS is ${OpenChemistry_THIRDPARTYLIBS_ARGS}")
-message("OpenChemistry_INSTALL_PREFIX is ${OpenChemistry_INSTALL_PREFIX}")
-message("sqlite3_SOURCE_DIR is ${sqlite3_SOURCE_DIR}")
-message("spdlog_SOURCE_DIR is ${spdlog_SOURCE_DIR}")
-message("boostorg_SOURCE_DIR is ${boostorg_SOURCE_DIR}")
+
+#message("tasketor_BINARY_DIR is ${OpenChemistry_BINARY_DIR}")
+#message("OpenChemistry_DEFAULT_ARGS is ${OpenChemistry_DEFAULT_ARGS}")
+#message("OpenChemistry_THIRDPARTYLIBS_ARGS is ${OpenChemistry_THIRDPARTYLIBS_ARGS}")
+#message("OpenChemistry_INSTALL_PREFIX is ${OpenChemistry_INSTALL_PREFIX}")
+#message("sqlite3_SOURCE_DIR is ${sqlite3_SOURCE_DIR}")
+#message("spdlog_SOURCE_DIR is ${spdlog_SOURCE_DIR}")
+#message("boostorg_SOURCE_DIR is ${boostorg_SOURCE_DIR}")
 
 
 
@@ -282,8 +286,8 @@ if(UNIX AND NOT APPLE)
 		##    shlwapi
 		##    version
 		##    oleacc
-		-licuuc
-		-licui18n
+#		-licuuc
+#		-licui18n
 		-ldl       #linux
 		-lpthread  #linux
 		-static

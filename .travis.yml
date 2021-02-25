@@ -54,7 +54,6 @@ matrix:
           - ubuntu-toolchain-r-test
         packages:
           - libboost-all-dev
-          - icu-devtools
 
     compiler: gcc
 
