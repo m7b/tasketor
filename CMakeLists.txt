@@ -81,18 +81,24 @@ if(NOT boostorg_POPULATED)
     
     if(WIN32)
         # for Windows operating system in general
+        message("BOOST set booststrap command for WINDOWS ********************")
         set(boost_bootstrap_cmd bootstrap.bat gcc)
+        set(boost_b2_cmd        b2)
     endif()
 
     if(UNIX AND NOT APPLE)
         # for Linux, BSD, Solaris, Minix
-        set(boost_bootstrap_cmd bootstrap.sh)
+        message("BOOST set booststrap command for LINUX **********************")
+        set(boost_bootstrap_cmd ./bootstrap.sh)
+        set(boost_b2_cmd        ./b2)
     endif()
     
+    message("Bootstrap command is ${boost_bootstrap_cmd}")
+    message("b2 command is ${boost_b2_cmd}")
     
     
     file(
-	COPY        ${CMAKE_CURRENT_SOURCE_DIR}/patches/bootstrap.bat
+        COPY        ${CMAKE_CURRENT_SOURCE_DIR}/patches/bootstrap.bat
         DESTINATION ${boostorg_SOURCE_DIR}
     )
     Execute_Process(
@@ -100,11 +106,11 @@ if(NOT boostorg_POPULATED)
         WORKING_DIRECTORY ${boostorg_SOURCE_DIR}
     )
     Execute_Process(
-        COMMAND b2 headers
+        COMMAND ${boost_b2_cmd} headers
         WORKING_DIRECTORY ${boostorg_SOURCE_DIR}
     )
     Execute_Process(
-        COMMAND b2 toolset=gcc address-model=64 --with-filesystem --with-date_time --with-test --with-locale
+        COMMAND ${boost_b2_cmd} toolset=gcc address-model=64 --with-filesystem --with-date_time --with-test --with-locale
         WORKING_DIRECTORY ${boostorg_SOURCE_DIR}
     )
     message("BOOST POPULATED *********************************************************")
