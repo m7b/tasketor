@@ -178,7 +178,7 @@ target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC $<$<CONFIG:Debug>:-O0>)
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC $<$<CONFIG:Release>:-Ofast>)
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -funroll-loops)
 #target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -mthreads)
-target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -pthread)
+#target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -pthread)
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -pipe)
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -Wall)
 
@@ -263,9 +263,11 @@ target_link_libraries(
 	${Boost_LIBRARIES}
 #    ${boostorg_SOURCE_DIR}/stage/lib/libboost_locale-mgw9-mt-x64-1_75.a
     ${SQLite3_LIBRARIES}
-    shlwapi
-    version
-    oleacc
+##    shlwapi
+##    version
+##    oleacc
+    -ldl       #linux
+    -lpthread  #linux
     -static
     -static-libgcc
     -static-libstdc++
