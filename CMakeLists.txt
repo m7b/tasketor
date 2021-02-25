@@ -282,6 +282,7 @@ if(UNIX AND NOT APPLE)
 		##    shlwapi
 		##    version
 		##    oleacc
+		-licuuc
 		-ldl       #linux
 		-lpthread  #linux
 		-static
