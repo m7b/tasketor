@@ -283,6 +283,7 @@ if(UNIX AND NOT APPLE)
 		##    version
 		##    oleacc
 		-licuuc
+		-licui18n
 		-ldl       #linux
 		-lpthread  #linux
 		-static
