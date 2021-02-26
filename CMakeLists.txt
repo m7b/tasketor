@@ -82,8 +82,8 @@ if(NOT boostorg_POPULATED)
     if(WIN32)
         # for Windows operating system in general
         message("BOOST set booststrap command for WINDOWS ********************")
-        set(boost_bootstrap_cmd "bootstrap.bat gcc")
-        set(boost_b2_cmd        b2)
+        set(boost_bootstrap_cmd "./bootstrap.bat gcc")
+        set(boost_b2_cmd        ./b2)
     endif()
 
     if(UNIX AND NOT APPLE)
