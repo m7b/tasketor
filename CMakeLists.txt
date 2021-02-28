@@ -105,7 +105,8 @@ if(NOT boostorg_POPULATED)
         message("b2 command not exist. Try to compile it ****")
         message("Running ${boost_bootstrap_cmd} in directory ${boostorg_SOURCE_DIR}")
         Execute_Process(
-            COMMAND ${boost_bootstrap_cmd}
+        #    COMMAND ${boost_bootstrap_cmd}
+            COMMAND cmd /c "${boost_bootstrap_cmd}"
             WORKING_DIRECTORY ${boostorg_SOURCE_DIR}
         )
     endif()

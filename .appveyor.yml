@@ -49,7 +49,7 @@ environment:
 # scripts that run after cloning repository
 install:
   # Install MSYS2 libmariadb, boost
-  - C:\CPP\tools\msys64\usr\bin\bash -l -c "pacman -Sy --noconfirm mingw64/mingw-w64-x86_64-libmariadbclient mingw64/mingw-w64-x86_64-boost 2>&1"
+#  - C:\CPP\tools\msys64\usr\bin\bash -l -c "pacman -Sy --noconfirm mingw64/mingw-w64-x86_64-libmariadbclient mingw64/mingw-w64-x86_64-boost 2>&1"
 
 build_script:
   - mkdir build
