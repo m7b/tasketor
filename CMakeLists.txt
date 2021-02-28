@@ -82,8 +82,8 @@ if(NOT boostorg_POPULATED)
     if(WIN32)
         # for Windows operating system in general
         message("BOOST set booststrap command for WINDOWS ********************")
-        set(boost_bootstrap_cmd "./bootstrap.bat gcc")
-        set(boost_b2_cmd        ./b2)
+        set(boost_bootstrap_cmd "bootstrap.bat gcc")
+        set(boost_b2_cmd        b2.exe)
     endif()
 
     if(UNIX AND NOT APPLE)
@@ -101,7 +101,7 @@ if(NOT boostorg_POPULATED)
         DESTINATION ${boostorg_SOURCE_DIR}
     )
     
-    if(NOT EXISTS "${boostorg_SOURCE_DIR}/b2")
+    if(NOT EXISTS "${boostorg_SOURCE_DIR}/${boost_b2_cmd}")
         Execute_Process(
             COMMAND ${boost_bootstrap_cmd}
             WORKING_DIRECTORY ${boostorg_SOURCE_DIR}
