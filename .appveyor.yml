@@ -33,8 +33,8 @@ init:
   - C:\CPP\tools\msys64\usr\bin\bash -lc "pacman-key --verify msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz.sig"
   - C:\CPP\tools\msys64\usr\bin\bash -lc "pacman --noconfirm -U msys2-keyring-r21.b39fb11-1-any.pkg.tar.xz"
   # Update MSYS2
-  - C:\CPP\tools\msys64\usr\bin\bash -lc "pacman --noconfirm -Syuu"  # Core update
-  - C:\CPP\tools\msys64\usr\bin\bash -lc "pacman --noconfirm -Syuu"  # Normal update
+#  - C:\CPP\tools\msys64\usr\bin\bash -lc "pacman --noconfirm -Syuu"  # Core update
+#  - C:\CPP\tools\msys64\usr\bin\bash -lc "pacman --noconfirm -Syuu"  # Normal update
 
 # fetch repository as zip archive. default is "false"
 shallow_clone: true
