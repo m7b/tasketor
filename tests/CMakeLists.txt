@@ -22,7 +22,7 @@ FOREACH(testSrc ${TEST_SRCS})
         target_link_libraries(
             ${testName}
 			this_project
-			sqlite
+			${SQLite3_LIBRARIES}
             ${Boost_LIBRARIES}
             ws2_32
             -static
