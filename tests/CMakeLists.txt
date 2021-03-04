@@ -4,7 +4,7 @@
 #Setup CMake to run tests
 ENABLE_TESTING()
 
-FIND_PACKAGE(Boost REQUIRED unit_test_framework locale)
+FIND_PACKAGE(Boost REQUIRED locale unit_test_framework)
 INCLUDE_DIRECTORIES(${Boost_INCLUDE_DIRS})
 
 #I like to keep test files in a separate source directory called test
@@ -25,6 +25,7 @@ FOREACH(testSrc ${TEST_SRCS})
 			${SQLite3_LIBRARIES}
             ${Boost_LIBRARIES}
             ws2_32
+            -liconv
             -static
         )
 
