@@ -50,7 +50,7 @@ message("BOOST NOT POPULATED ***************************************************
 if(WIN32)
 	# for Windows operating system in general
 	message("BOOST set booststrap command for WINDOWS ********************")
-	set(boost_bootstrap_cmd "cmd /c ${CMAKE_CURRENT_SOURCE_DIR}/patches/bootstrap.bat gcc")
+	set(boost_bootstrap_cmd "cmd /c ${CMAKE_CURRENT_SOURCE_DIR}/patches/test.bat gcc")
 #	set(boost_bootstrap_cmd "cmd /c ECHO Hallo Welt !!!")
 	set(boost_b2_cmd        b2.exe)
 endif()
