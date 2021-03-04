@@ -313,4 +313,4 @@ endif()
 
 
 
-#ADD_SUBDIRECTORY(test)
+ADD_SUBDIRECTORY(test)
