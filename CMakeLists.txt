@@ -47,8 +47,8 @@ SET(GIT_PROGRESS ON)
 
 FetchContent_Declare(
     sqlite3
-    URL                https://sqlite.org/2021/sqlite-amalgamation-3340100.zip
-    URL_HASH           SHA3_256=be0d07b08969aa775c628f214c723955c0bfe880d72c3289a1ff54ad779b15d3
+	URL                https://sqlite.org/2021/sqlite-amalgamation-3350500.zip
+    URL_HASH           SHA3_256=8175cba8e28c2274aa6f8305076116622a4ecb7829673b92290dc047fba9bba6
     )
 
 FetchContent_MakeAvailable(sqlite3)
@@ -56,7 +56,7 @@ FetchContent_MakeAvailable(sqlite3)
 FetchContent_Declare(
     spdlog
     GIT_REPOSITORY     https://github.com/gabime/spdlog.git
-    GIT_TAG            v1.8.2
+    GIT_TAG            v1.8.5
     GIT_SHALLOW        TRUE
     GIT_PROGRESS       TRUE
     )
@@ -152,7 +152,6 @@ endif()
 # so that we will find TutorialConfig.h
 include_directories("${CMAKE_CURRENT_BINARY_DIR}"
                     "${PROJECT_SOURCE_DIR}/include"
-#                    "${Boost_INCLUDE_DIRS}"
                     "${boostorg_SOURCE_DIR}"
                     "${sqlite3_SOURCE_DIR}"
                     "${spdlog_SOURCE_DIR}/include"
