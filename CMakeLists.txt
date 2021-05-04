@@ -102,6 +102,11 @@ if(NOT boostorg_POPULATED)
     message("Bootstrap command is ${boost_bootstrap_cmd}")
     message("b2 command is ${boost_b2_cmd}")
     
+	file(
+        COPY        ${CMAKE_CURRENT_SOURCE_DIR}/patches/bootstrap.bat
+        DESTINATION ${boostorg_SOURCE_DIR}
+    )
+	
     if(NOT EXISTS "${boostorg_SOURCE_DIR}/${boost_b2_cmd}")
         message("b2 command not exist. Try to compile it ****")
         message("Running ${boost_bootstrap_cmd} in directory ${boostorg_SOURCE_DIR}")
