@@ -47,8 +47,8 @@ SET(GIT_PROGRESS ON)
 
 FetchContent_Declare(
     sqlite3
-	URL                https://sqlite.org/2021/sqlite-amalgamation-3350500.zip
-    URL_HASH           SHA3_256=8175cba8e28c2274aa6f8305076116622a4ecb7829673b92290dc047fba9bba6
+	URL                https://sqlite.org/2021/sqlite-amalgamation-3360000.zip
+    URL_HASH           SHA3_256=d25609210ec93b3c8c7da66a03cf82e2c9868cfbd2d7d866982861855e96f972
     )
 
 FetchContent_MakeAvailable(sqlite3)
@@ -56,7 +56,7 @@ FetchContent_MakeAvailable(sqlite3)
 FetchContent_Declare(
     spdlog
     GIT_REPOSITORY     https://github.com/gabime/spdlog.git
-    GIT_TAG            v1.8.5
+    GIT_TAG            v1.9.2
     GIT_SHALLOW        TRUE
     GIT_PROGRESS       TRUE
     )
@@ -67,7 +67,7 @@ FetchContent_MakeAvailable(spdlog)
 FetchContent_Declare(
     boostorg
     GIT_REPOSITORY     https://github.com/boostorg/boost.git
-    GIT_TAG            boost-1.76.0
+    GIT_TAG            boost-1.77.0
     GIT_SHALLOW        TRUE
     GIT_PROGRESS       TRUE
     )
