@@ -26,10 +26,6 @@ int main()
     using namespace boost::locale;
     using namespace boost::gregorian;
 
-    generator gen;
-    std::locale::global(gen(""));
-    std::cout.imbue(std::locale());
-
     std::string from_date = "2022-10-01";
     std::string   to_date = "2022-10-31";
 
