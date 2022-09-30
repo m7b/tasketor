@@ -4,13 +4,20 @@ REM Clear output
 REM CLS
 
 REM Extend search path for this batch file
-SET PATH=%PATH%;V:\cmake-3.20.0-rc1-windows-x86_64\bin
-SET PATH=%PATH%;V:\nsis-3.05\bin
-SET PATH=%PATH%;V:\doxygen-1.8.15.windows.x64.bin
-SET PATH=%PATH%;V:\graphviz-2.38\release\bin
-SET PATH=%PATH%;Z:\bin
+REM https://stackoverflow.com/questions/141344/how-to-check-if-directory-exists-in-path
+SET pathVar=V:\cmake-3.24.0-rc4-windows-x86_64\bin
+CALL scripts\addPath pathVar /B
+SET pathVar=V:\nsis-3.05\bin
+CALL scripts\addPath pathVar /B
+SET pathVar=V:\doxygen-1.8.15.windows.x64.bin
+CALL scripts\addPath pathVar /B
+SET pathVar=V:\graphviz-2.38\release\bin
+CALL scripts\addPath pathVar /B
+SET pathVar=Z:\bin
+CALL scripts\addPath pathVar /B
 
 REM Set Defaults
+SET fetchcontent=OFF
 SET buildtype=Release
 SET pack=OFF
 SET generator=MinGW Makefiles
@@ -22,39 +29,48 @@ REM Handle parameters
 REM Show help and exit
 IF     [%1]==[-h]           GOTO HELP
 IF     [%1]==[--help]       GOTO HELP
+IF     [%1]==[-fc]            GOTO FETCHCONTENT
+IF     [%1]==[--fetchcontent] GOTO FETCHCONTENT
 IF     [%1]==[-r]           GOTO BUILDRELEASE
 IF     [%1]==[--release]    GOTO BUILDRELEASE
 IF     [%1]==[-p]           GOTO PACKAGE
 IF     [%1]==[--package]    GOTO PACKAGE
 IF     [%1]==[-d]           GOTO BUILDDEBUG
 IF     [%1]==[--debug]      GOTO BUILDDEBUG
+IF     [%1]==[-j]           GOTO JOBS
+IF     [%1]==[--jobs]       GOTO JOBS
+IF     [%1]==[-v]           GOTO VERBOSE
+IF     [%1]==[--verbose]    GOTO VERBOSE
 IF     [%1]==[-cb]          GOTO BUILDCODEBLOCKS
 IF     [%1]==[--codeblocks] GOTO BUILDCODEBLOCKS
 IF     [%1]==[-doc]         GOTO DOC
 IF     [%1]==[--document]   GOTO DOC
 IF     [%1]==[-c]           GOTO CLEAN
 IF     [%1]==[--clean]      GOTO CLEAN
-::-clean          :löscht build
-::-cleanlib       :löscht ext_libs
-::-cleanall       :löscht build und ext_libs
+IF     [%1]==[-hc]          GOTO HARDCLEAN
+IF     [%1]==[--hardclean]  GOTO HARDCLEAN
 IF NOT [%1]==[]             GOTO HELP
 GOTO BUILD
 
 :HELP
-ECHO Perform a build or a clean. By default without any options, this script performs
-ECHO a release build only (like %~nx0 -r).
+ECHO Perform a build or a clean.
 ECHO:
 ECHO %~nx0 ^<options^>
 ECHO:
 ECHO Available options:
 ECHO:
-ECHO   -h,   --help        Show this help message.
-ECHO   -r,   --release     Build a release application in build directory.
-ECHO   -d,   --debug       Build a debug application in build directory.
-ECHO   -p,   --package     Build an installer package.
-ECHO   -cb,  --codeblocks  Creates a code blocks project file.
-ECHO   -doc, --document    Creates doxygen document
-ECHO   -c,   --clean       Deletes the build directory.
+ECHO   -h,   --help          Show this help message.
+ECHO   -fc,  --fetchcontent  Fetch and populate additional content/libraries.
+ECHO                         This should be done for first time build or after cleanup.
+ECHO   -r,   --release       Build a release application in build directory.
+ECHO   -d,   --debug         Build a debug application in build directory.
+ECHO   -j ^<n^>, --jobs ^<n^>    Number of executing parallel jobs.
+ECHO   -v,   --verbose       Switches verbose mode on.
+ECHO   -p,   --package       Build an installer package.
+ECHO   -cb,  --codeblocks    Creates a code blocks project file.
+ECHO   -doc, --document      Creates doxygen document
+ECHO   -c,   --clean         Performs a cmake clean (target clean).
+ECHO   -hc,  --hardclean     Deletes the complete build directory.
 ECHO:
 ECHO:
 ECHO Example usage:
@@ -62,6 +78,11 @@ ECHO:
 ECHO %~nx0 -d -cb (create a debug codeblocks project and build)
 ECHO:
 GOTO EXIT
+
+:FETCHCONTENT
+SET fetchcontent=ON
+SHIFT
+GOTO Loop
 
 :BUILDRELEASE
 SET buildtype=Release
@@ -78,6 +99,17 @@ SET buildtype=Debug
 SHIFT
 GOTO Loop
 
+:JOBS
+SET j_option=%2
+SHIFT
+SHIFT
+GOTO Loop
+
+:VERBOSE
+SET verbose=ON
+SHIFT
+GOTO Loop
+
 :BUILDCODEBLOCKS
 SET generator=CodeBlocks - MinGW Makefiles
 SHIFT
@@ -87,7 +119,8 @@ GOTO Loop
 SET "startTime=%time: =0%"
 IF NOT EXIST build\NUL MKDIR build
 CD build
-cmake -G "%generator%" -DCMAKE_SH="CMAKE_SH-NOTFOUND" -DCMAKE_VERBOSE_MAKEFILE:BOOL=%verbose% -DCMAKE_BUILD_TYPE=%buildtype% ..
+cmake -G "%generator%" -DCMAKE_VERBOSE_MAKEFILE:BOOL=%verbose% -DCMAKE_BUILD_TYPE=%buildtype% -DCMAKE_FETCHCONTENT_MODE=%fetchcontent% ..
+REM cmake -G "%generator%" -DCMAKE_SH="CMAKE_SH-NOTFOUND" -DCMAKE_VERBOSE_MAKEFILE:BOOL=%verbose% -DCMAKE_BUILD_TYPE=%buildtype% ..
 IF "%pack%" == "OFF" (
     cmake --build . -- -j %j_option%
 ) ELSE (
@@ -117,7 +150,15 @@ CD ..
 GOTO DONE
 
 :CLEAN
-IF EXIST build\NUL RD /S /Q build
+IF EXIST build\NUL cmake --build build --target clean
+GOTO EXIT
+
+:HARDCLEAN
+IF NOT EXIST build\NUL GOTO EXIT
+IF EXIST build\build_statistics.txt MOVE build\build_statistics.txt %temp%
+RD /S /Q build
+MKDIR build
+IF EXIST build\build_statistics.txt MOVE %temp%\build_statistics.txt build
 GOTO EXIT
 
 :J_OPTION

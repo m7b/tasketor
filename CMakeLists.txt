@@ -274,7 +274,6 @@ if(WIN32)
 		##    shlwapi
 		##    version
 		##    oleacc
-        -liconv
 		-static
 		-static-libgcc
 		-static-libstdc++

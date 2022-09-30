@@ -25,7 +25,6 @@ FOREACH(testSrc ${TEST_SRCS})
 			${SQLite3_LIBRARIES}
             ${Boost_LIBRARIES}
             ws2_32
-            -liconv
             -static
         )
 

@@ -70,9 +70,9 @@ void C_Project::insertTestData(void)
     query = "";
     query += "INSERT INTO tEvent (cEvent, cEventDetails, cFirstTime, cPeriodeId, cWeekdays) ";
     query += "VALUES ";
-    query += "('Ev-A', '9:30 - 9:45',   '2020-10-01', (SELECT cId FROM tPeriode WHERE cPeriode='täglich'),     'Mo, Di, Mi, Do, Fr, Sa'),";
-    query += "('Ev-B', '19:15 - 21:00', '2020-10-07', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Mi'),";
-    query += "('Ev-C', '18:30 - 20:15', '2020-10-03', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Sa');";
+    query += "('Ev-A', '9:30 - 9:45',   '2022-10-01', (SELECT cId FROM tPeriode WHERE cPeriode='täglich'),     'Mo, Di, Mi, Do, Fr, Sa'),";
+    query += "('Ev-B', '19:15 - 21:00', '2022-10-07', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Mi'),";
+    query += "('Ev-C', '18:30 - 20:15', '2022-10-03', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Sa');";
 
     rc = exec_db(&query);
     std::cout << "Query: " << rc << std::endl;
@@ -80,8 +80,8 @@ void C_Project::insertTestData(void)
     query = "";
     query += "INSERT INTO tEventReplacementPlan (cEventId, cPlan, cReplacement, cReason) ";
     query += "VALUES ";
-    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-B'), '2020-10-21', '2020-10-20', 'Außerplanmäßiger Grund'),";
-    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-C'), '2020-10-21', '2020-10-20', 'Außerplanmäßiger Grund');";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-B'), '2022-10-21', '2022-10-20', 'Außerplanmäßiger Grund'),";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-C'), '2022-10-21', '2022-10-20', 'Außerplanmäßiger Grund');";
 
     rc = exec_db(&query);
     std::cout << "Query: " << rc << std::endl;
@@ -168,8 +168,8 @@ void C_Project::insertTestData(void)
     query = "";
     query += "INSERT INTO tPersonAbsent (cPersonId, cFrom, cTo) ";
     query += "VALUES ";
-    query += "((SELECT cId FROM tPerson WHERE cName='Edgar'),     '2020-10-26', '2020-11-01'),";
-    query += "((SELECT cId FROM tPerson WHERE cName='Braftaler'), '2020-10-31', '');";
+    query += "((SELECT cId FROM tPerson WHERE cName='Edgar'),     '2022-10-26', '2022-11-01'),";
+    query += "((SELECT cId FROM tPerson WHERE cName='Braftaler'), '2022-10-31', '');";
 
     rc = exec_db(&query);
     std::cout << "Query: " << rc << std::endl;
@@ -199,12 +199,12 @@ std::string C_Project::get_event(std::string date)
     {
         if (el.cPeriode == "täglich")
         {
-            result_list += el.cEvent + ",";
+            result_list += el.cEvent + ", ";
         }
 
         if (el.cPeriode == "wöchentlich")
         {
-            result_list += el.cEvent + ",";
+            result_list += el.cEvent + ", ";
         }
     }
 
