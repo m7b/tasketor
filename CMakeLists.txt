@@ -38,106 +38,39 @@ endif()
 
 # ADD_SUBDIRECTORY(doc)
 
+## Conan Package Manager
+## for ...
+##   - sqlite
+##   - spdlog
+## SET(CONAN_DISABLE_CHECK_COMPILER ON CACHE BOOL "Disabling compiler check (Conan)")  <-- this does not work at this stage
+## Make dependencies available
+INCLUDE(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
 
 
-include(FetchContent)
+
+
+
+## Cmake FetchContent
+## for ...
+##   - wxWidgets
+##   - Boost
+INCLUDE(FetchContent)
 SET(FETCHCONTENT_QUIET OFF)
+message("++ Fetch Content Mode is set to ${CMAKE_FETCHCONTENT_MODE}")
+if(CMAKE_FETCHCONTENT_MODE STREQUAL OFF)
+    SET(FETCHCONTENT_FULLY_DISCONNECTED ON)
+endif()
 SET(GIT_SHALLOW ON)
 SET(GIT_PROGRESS ON)
-
-FetchContent_Declare(
-    sqlite3
-	URL                https://sqlite.org/2021/sqlite-amalgamation-3360000.zip
-    URL_HASH           SHA3_256=d25609210ec93b3c8c7da66a03cf82e2c9868cfbd2d7d866982861855e96f972
-    )
-
-FetchContent_MakeAvailable(sqlite3)
-
-FetchContent_Declare(
-    spdlog
-    GIT_REPOSITORY     https://github.com/gabime/spdlog.git
-    GIT_TAG            v1.9.2
-    GIT_SHALLOW        TRUE
-    GIT_PROGRESS       TRUE
-    )
-
-FetchContent_MakeAvailable(spdlog)
-
-#set(BOOST_ENABLE_CMAKE ON)
-FetchContent_Declare(
-    boostorg
-    GIT_REPOSITORY     https://github.com/boostorg/boost.git
-    GIT_TAG            boost-1.77.0
-    GIT_SHALLOW        TRUE
-    GIT_PROGRESS       TRUE
-    )
-
-#FetchContent_MakeAvailable(boostorg)
-FetchContent_GetProperties(boostorg)
-
-if(NOT boostorg_POPULATED)
-    message("BOOST NOT POPULATED *********************************************************")
-    FetchContent_Populate(boostorg)
-    
-    if(WIN32)
-        # for Windows operating system in general
-        message("BOOST set booststrap command for WINDOWS ********************")
-        set(boost_bootstrap_cmd  "cmd")
-        set(boost_bootstrap_arg1 "/c")
-        set(boost_bootstrap_arg2 "bootstrap.bat gcc")
-        set(boost_b2_cmd         b2.exe)
-    endif()
-
-    if(UNIX AND NOT APPLE)
-        # for Linux, BSD, Solaris, Minix
-        message("BOOST set booststrap command for LINUX **********************")
-        set(boost_bootstrap_cmd  "sh")
-        set(boost_bootstrap_arg1 "-c")
-        set(boost_bootstrap_arg2 "./bootstrap.sh")
-        set(boost_b2_cmd         ./b2)
-    endif()
-
-
-    
-    message("Bootstrap command is ${boost_bootstrap_cmd}")
-    message("b2 command is ${boost_b2_cmd}")
-    
-	file(
-        COPY        ${CMAKE_CURRENT_SOURCE_DIR}/patches/bootstrap.bat
-        DESTINATION ${boostorg_SOURCE_DIR}
-    )
-	
-    if(NOT EXISTS "${boostorg_SOURCE_DIR}/${boost_b2_cmd}")
-        message("b2 command not exist. Try to compile it ****")
-        message("Running ${boost_bootstrap_cmd} in directory ${boostorg_SOURCE_DIR}")
-        Execute_Process(
-            COMMAND ${boost_bootstrap_cmd} ${boost_bootstrap_arg1} ${boost_bootstrap_arg2}
-            WORKING_DIRECTORY ${boostorg_SOURCE_DIR}
-        )
-    endif()
-
-    Execute_Process(
-        COMMAND ${boost_b2_cmd} headers
-        WORKING_DIRECTORY ${boostorg_SOURCE_DIR}
-    )
-    Execute_Process(
-        COMMAND ${boost_b2_cmd} toolset=gcc address-model=64 --with-filesystem --with-date_time --with-test --with-locale
-        WORKING_DIRECTORY ${boostorg_SOURCE_DIR}
-    )
-    message("BOOST POPULATED *********************************************************")
-	
-#    set(Boost_DEBUG ON)
-#    set(Boost_NO_SYSTEM_PATHS ON)
-    set(Boost_ARCHITECTURE "-x64")
-    set(Boost_USE_STATIC_LIBS        ON)
-    set(Boost_USE_MULTITHREADED      ON)
-    set(Boost_USE_STATIC_RUNTIME    OFF)
-    set(BOOST_ROOT ${boostorg_SOURCE_DIR})
-#    set(BOOST_INCLUDEDIR ${boostorg_SOURCE_DIR})
-#    set(BOOST_LIBRARYDIR ${boostorg_SOURCE_DIR}/stage/lib)
-    FIND_PACKAGE(Boost 1.75.0 REQUIRED filesystem date_time locale unit_test_framework)
-	
-endif()
+#   - Boost
+SET(GIT_REPOSITORY_BOOST     https://github.com/boostorg/boost.git)
+SET(GIT_TAG_BOOST            boost-1.80.0)
+INCLUDE(fetch_boost)
+##   - wxWidgets
+#SET(GIT_REPOSITORY_WXWIDGETS https://github.com/wxWidgets/wxWidgets.git)
+#SET(GIT_TAG_WXWIDGETS        v3.2.1)
+#INCLUDE(fetch_wxwidgets)
 
 
 
@@ -152,9 +85,8 @@ endif()
 # so that we will find TutorialConfig.h
 include_directories("${CMAKE_CURRENT_BINARY_DIR}"
                     "${PROJECT_SOURCE_DIR}/include"
-                    "${boostorg_SOURCE_DIR}"
-                    "${sqlite3_SOURCE_DIR}"
-                    "${spdlog_SOURCE_DIR}/include"
+					"${CONAN_INCLUDE_DIRS}"
+                    "${Boost_INCLUDE_DIRS}"
 )
 
 
@@ -163,7 +95,8 @@ add_library(
     this_project
     src/C_DbHandle.cpp
     src/C_Project.cpp
-	${sqlite3_SOURCE_DIR}/sqlite3.c
+#    ${CONAN_LIBS}
+#	${sqlite3_SOURCE_DIR}/sqlite3.c
 )
 
 
@@ -270,7 +203,7 @@ if(WIN32)
 		${CMAKE_PROJECT_NAME}
 		this_project
 		${Boost_LIBRARIES}
-		${SQLite3_LIBRARIES}
+        ${CONAN_LIBS}
 		##    shlwapi
 		##    version
 		##    oleacc
@@ -289,7 +222,7 @@ if(UNIX AND NOT APPLE)
 		${CMAKE_PROJECT_NAME}
 		this_project
 		${Boost_LIBRARIES}
-		${SQLite3_LIBRARIES}
+        ${CONAN_LIBS}
 		##    shlwapi
 		##    version
 		##    oleacc

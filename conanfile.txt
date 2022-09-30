@@ -1,0 +1,10 @@
+[requires]
+spdlog/1.10.0
+sqlite3/3.39.2
+
+[generators]
+cmake
+
+[options]
+fmt:header_only=True
+spdlog:header_only=True

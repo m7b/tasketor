@@ -22,7 +22,8 @@ FOREACH(testSrc ${TEST_SRCS})
         target_link_libraries(
             ${testName}
 			this_project
-			${SQLite3_LIBRARIES}
+            ${CONAN_LIBS}
+		#	${SQLite3_LIBRARIES}
             ${Boost_LIBRARIES}
             ws2_32
             -static

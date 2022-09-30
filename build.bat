@@ -119,6 +119,8 @@ GOTO Loop
 SET "startTime=%time: =0%"
 IF NOT EXIST build\NUL MKDIR build
 CD build
+conan install .. --build=missing
+::conan install .. --build
 cmake -G "%generator%" -DCMAKE_VERBOSE_MAKEFILE:BOOL=%verbose% -DCMAKE_BUILD_TYPE=%buildtype% -DCMAKE_FETCHCONTENT_MODE=%fetchcontent% ..
 REM cmake -G "%generator%" -DCMAKE_SH="CMAKE_SH-NOTFOUND" -DCMAKE_VERBOSE_MAKEFILE:BOOL=%verbose% -DCMAKE_BUILD_TYPE=%buildtype% ..
 IF "%pack%" == "OFF" (
