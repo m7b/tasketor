@@ -44,7 +44,7 @@ int main()
     {
         std::cout << "| " << to_iso_extended_string(d) << " ";
         std::cout << "| " << d.day_of_week().as_short_string() << " | ";
-        std::cout << test.get_event(to_iso_extended_string(d))  << std::endl;
+        std::cout << test.get_event(d)  << std::endl;
     }
 
     return 0;

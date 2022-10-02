@@ -14,6 +14,10 @@
 #include <boost/locale.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
 
+
+    using namespace boost::locale;
+    using namespace boost::gregorian;
+
 #include "C_Project.h"
 
 

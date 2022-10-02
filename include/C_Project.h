@@ -13,6 +13,11 @@
 #include <vector>
 
 
+#include <boost/locale.hpp>
+#include <boost/date_time/gregorian/gregorian.hpp>
+    using namespace boost::locale;
+    using namespace boost::gregorian;
+
 
 typedef struct _res_events
 {
@@ -35,7 +40,10 @@ public:
     void save(void);
 
     //Pass a date and get the event at this date
-    std::string get_event(std::string date);
+    std::string get_event(date d);
+
+    //Pass a date and get the weekday at this date
+    std::string get_weekday(date d);
 
 private:
 

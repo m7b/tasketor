@@ -70,9 +70,9 @@ void C_Project::insertTestData(void)
     query = "";
     query += "INSERT INTO tEvent (cEvent, cEventDetails, cFirstTime, cPeriodeId, cWeekdays) ";
     query += "VALUES ";
-    query += "('Ev-A', '9:30 - 9:45',   '2022-10-01', (SELECT cId FROM tPeriode WHERE cPeriode='täglich'),     'Mo, Di, Mi, Do, Fr, Sa'),";
-    query += "('Ev-B', '19:15 - 21:00', '2022-10-07', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Mi'),";
-    query += "('Ev-C', '18:30 - 20:15', '2022-10-03', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Sa');";
+    query += "('Ev-A', '9:30 - 9:45',   '2022-10-01', (SELECT cId FROM tPeriode WHERE cPeriode='täglich'),     'Mon, Tue, Wed, Tue, Frr, Sat'),";
+    query += "('Ev-B', '19:15 - 21:00', '2022-10-07', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Wed'),";
+    query += "('Ev-C', '18:30 - 20:15', '2022-10-03', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Sat');";
 
     rc = exec_db(&query);
     std::cout << "Query: " << rc << std::endl;
@@ -184,7 +184,7 @@ void C_Project::save(void)
 
 
 //Pass a date and get the event at this date
-std::string C_Project::get_event(std::string date)
+std::string C_Project::get_event(date d)
 {
     std::string result_list = "";
 
@@ -204,11 +204,26 @@ std::string C_Project::get_event(std::string date)
 
         if (el.cPeriode == "wöchentlich")
         {
-            result_list += el.cEvent + ", ";
+            date start_date = from_string(el.cFirstTime);
+            if (d >= start_date)
+            {
+                std::string weekday = get_weekday(d);
+                int pos = el.cWeekdays.find(weekday);
+                if (pos != std::string::npos)
+                {
+                    result_list += el.cEvent + ", ";
+                }
+            }
         }
     }
 
     return result_list;
+}
+
+
+std::string C_Project::get_weekday(date d)
+{
+    return d.day_of_week().as_short_string();
 }
 
 
