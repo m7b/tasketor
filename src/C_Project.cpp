@@ -70,7 +70,7 @@ void C_Project::insertTestData(void)
     query = "";
     query += "INSERT INTO tEvent (cEvent, cEventDetails, cFirstTime, cPeriodeId, cWeekdays) ";
     query += "VALUES ";
-    query += "('Ev-A', '9:30 - 9:45',   '2022-10-01', (SELECT cId FROM tPeriode WHERE cPeriode='täglich'),     'Mon, Tue, Wed, Tue, Frr, Sat'),";
+    query += "('Ev-A', '9:30 - 9:45',   '2022-10-01', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Mon, Fri'),";
     query += "('Ev-B', '19:15 - 21:00', '2022-10-07', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Wed'),";
     query += "('Ev-C', '18:30 - 20:15', '2022-10-03', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Sat');";
 
@@ -89,11 +89,15 @@ void C_Project::insertTestData(void)
     query = "";
     query += "INSERT INTO tTask (cTask, cDescription, cPeriodeId) ";
     query += "VALUES ";
-    query += "('Ta-A', 'Host',    (SELECT cId FROM tPeriode WHERE cPeriode='jedes mal')),";
-    query += "('Ta-B', 'Co-Host', (SELECT cId FROM tPeriode WHERE cPeriode='jedes mal')),";
-    query += "('Ta-C', 'Vorsitz', (SELECT cId FROM tPeriode WHERE cPeriode='jedes mal')),";
-    query += "('Ta-D', 'Leser',   (SELECT cId FROM tPeriode WHERE cPeriode='jedes mal')),";
-    query += "('Ta-E', 'Host TP', (SELECT cId FROM tPeriode WHERE cPeriode='jedes mal'));";
+    query += "('Ta-A', 'Ordner 1',              (SELECT cId FROM tPeriode WHERE cPeriode='jedes mal')),";
+    query += "('Ta-B', 'Ordner 2',              (SELECT cId FROM tPeriode WHERE cPeriode='jedes mal')),";
+    query += "('Ta-C', 'Zoom-Ordner (Co-Host)', (SELECT cId FROM tPeriode WHERE cPeriode='jedes mal')),";
+    query += "('Ta-D', 'Host PC',               (SELECT cId FROM tPeriode WHERE cPeriode='jedes mal')),";
+    query += "('Ta-E', 'Mischpult',             (SELECT cId FROM tPeriode WHERE cPeriode='jedes mal')),";
+    query += "('Ta-F', 'Mikrofon 1',            (SELECT cId FROM tPeriode WHERE cPeriode='jedes mal')),";
+    query += "('Ta-G', 'Mikrofon 2',            (SELECT cId FROM tPeriode WHERE cPeriode='jedes mal')),";
+    query += "('Ta-H', 'Vorsitz',               (SELECT cId FROM tPeriode WHERE cPeriode='jedes mal')),";
+    query += "('Ta-I', 'WT-Leser',              (SELECT cId FROM tPeriode WHERE cPeriode='jedes mal'));";
 
     rc = exec_db(&query);
     std::cout << "Query: " << rc << std::endl;
@@ -187,6 +191,7 @@ void C_Project::save(void)
 std::string C_Project::get_event(date d)
 {
     std::string result_list = "";
+    date start_date;
 
     std::vector<res_events> v_events;
 
@@ -199,12 +204,16 @@ std::string C_Project::get_event(date d)
     {
         if (el.cPeriode == "täglich")
         {
-            result_list += el.cEvent + ", ";
+            start_date = from_string(el.cFirstTime);
+            if (d >= start_date)
+            {
+                result_list += el.cEvent + ", ";
+            }
         }
 
         if (el.cPeriode == "wöchentlich")
         {
-            date start_date = from_string(el.cFirstTime);
+            start_date = from_string(el.cFirstTime);
             if (d >= start_date)
             {
                 std::string weekday = get_weekday(d);
