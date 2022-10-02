@@ -38,14 +38,16 @@ int main()
     std::cout << "==========================================";
     std::cout << std::endl << std::endl;
 
+    std::cout << "+------------+-----+---------" << std::endl;
     std::cout << "| Datum      | Tag | Event(s)" << std::endl;
-    std::cout << "|------------|-----|---------" << std::endl;
+    std::cout << "+------------+-----+---------" << std::endl;
     for (date d = from; d <= to; d+=days(1))
     {
         std::cout << "| " << to_iso_extended_string(d) << " ";
         std::cout << "| " << d.day_of_week().as_short_string() << " | ";
         std::cout << test.get_event(d)  << std::endl;
     }
+    std::cout << "+------------+-----+---------" << std::endl;
 
     return 0;
 }

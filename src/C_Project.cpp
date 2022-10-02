@@ -70,9 +70,8 @@ void C_Project::insertTestData(void)
     query = "";
     query += "INSERT INTO tEvent (cEvent, cEventDetails, cFirstTime, cPeriodeId, cWeekdays) ";
     query += "VALUES ";
-    query += "('Ev-A', '9:30 - 9:45',   '2022-10-01', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Mon, Fri'),";
-    query += "('Ev-B', '19:15 - 21:00', '2022-10-07', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Wed'),";
-    query += "('Ev-C', '18:30 - 20:15', '2022-10-03', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Sat');";
+    query += "('Ev-A', '19:15 - 21:00', '2022-10-07', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Wed'),";
+    query += "('Ev-B', '18:30 - 20:15', '2022-10-03', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Sat');";
 
     rc = exec_db(&query);
     std::cout << "Query: " << rc << std::endl;
