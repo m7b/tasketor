@@ -651,6 +651,7 @@ void C_Project::get_all_tasks(std::vector<res_tasks> *v_res)
 
 std::string C_Project::create_header(const std::vector<the_plan> *plan)
 {
+    bool first = false;
     std::string header = "";
 
     header += "Datum;Tag;";
@@ -658,7 +659,15 @@ std::string C_Project::create_header(const std::vector<the_plan> *plan)
     for (const auto &h_row : *plan)
         for (const auto &h_task : h_row.v_tasks)
             if (header.find(h_task.task) == std::string::npos)
-                header += h_task.task + ";";
+            {
+                if (!first)
+                {
+                    first = true;
+                    header += h_task.task;
+                }
+                else
+                    header += ";" + h_task.task;
+            }
 
     return header;
 }
@@ -669,11 +678,11 @@ std::string C_Project::create_tarows(const std::vector<the_plan> *plan)
 
     for (const auto &h_row : *plan)
     {
-        rows += to_iso_extended_string(h_row.datum) + ";";                       // Datum
-        rows += std::string(h_row.datum.day_of_week().as_short_string()) + ";";  // Wochentag
+        rows += to_iso_extended_string(h_row.datum);                             // Datum
+        rows += ";" + std::string(h_row.datum.day_of_week().as_short_string());  // Wochentag
 
         for (const auto &h_task : h_row.v_tasks)
-            rows += h_task.assignee + ";";
+            rows += ";" + h_task.assignee;
 
         rows += "\n";
     }
