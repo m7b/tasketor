@@ -12,6 +12,8 @@
 #include <filesystem>
 namespace fs = std::filesystem;
 
+#include <fstream>
+
 PersList PList;
 
 int main()
@@ -33,7 +35,7 @@ int main()
     using namespace boost::gregorian;
 
     std::string from_date = "2022-10-01";
-    std::string   to_date = "2022-10-31";
+    std::string   to_date = "2022-12-31";
 
     date from(from_simple_string(from_date));
     date   to(from_simple_string(to_date));
@@ -86,16 +88,25 @@ int main()
         }
     }
 
-
+    // ########################################################################
+    // Create the plan (assignments)
+    // ########################################################################
+    test.do_assignments(&vthe_plan);
 
 
     // ########################################################################
     // Draw the plan (calendar)
     // ########################################################################
-    std::cout << test.create_header(&vthe_plan) << std::endl;
-    std::cout << test.create_tarows(&vthe_plan) << std::endl;
-    //for (const auto &row : vthe_plan)
+    std::fstream file;
+    file.open("todo.csv", std::ios_base::out);
 
+    file << test.create_header(&vthe_plan) << std::endl;
+    file << test.create_tarows(&vthe_plan) << std::endl;
+
+    //std::cout << test.create_header(&vthe_plan) << std::endl;
+    //std::cout << test.create_tarows(&vthe_plan) << std::endl;
+
+    file.close();
 
     return 0;
 }

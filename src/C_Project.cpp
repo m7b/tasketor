@@ -624,7 +624,7 @@ void C_Project::get_all_tasks(std::vector<res_tasks> *v_res)
     rc = open_db();
 
     std::string query = "";
-    query += "SELECT cEvent, cTask ";
+    query += "SELECT cEvent, cTask, cDescription ";
     query += "FROM tEventTasks ";
     query += "INNER JOIN tEvent ON tEvent.cId = tEventTasks.cEventId ";
     query += "INNER JOIN tTask ON tTask.cId = tEventTasks.cTaskId ";
@@ -638,7 +638,7 @@ void C_Project::get_all_tasks(std::vector<res_tasks> *v_res)
         {
             res_tasks res;
             res.cEvent  = get_text(COL_0);
-            res.cTask   = get_text(COL_1);
+            res.cTask   = get_text(COL_2);
             v_res->push_back(res);
         }
 
@@ -651,17 +651,14 @@ void C_Project::get_all_tasks(std::vector<res_tasks> *v_res)
 
 std::string C_Project::create_header(const std::vector<the_plan> *plan)
 {
-    std::string header = "---- Header ----\nsecond line\nthird line\n\n";
+    std::string header = "";
 
-    header += "+------------+-----+----------\n";
-    header += "| Datum      | Tag | ";
+    header += "Datum;Tag;";
 
     for (const auto &h_row : *plan)
         for (const auto &h_task : h_row.v_tasks)
             if (header.find(h_task.task) == std::string::npos)
-                header += h_task.task + " | ";
-
-    header += "\n+------------+-----+----------";
+                header += h_task.task + ";";
 
     return header;
 }
@@ -672,15 +669,162 @@ std::string C_Project::create_tarows(const std::vector<the_plan> *plan)
 
     for (const auto &h_row : *plan)
     {
-        rows += "| ";
-        rows += to_iso_extended_string(h_row.datum) + " | ";                       // Datum
-        rows += std::string(h_row.datum.day_of_week().as_short_string()) + " | ";  // Wochentag
+        rows += to_iso_extended_string(h_row.datum) + ";";                       // Datum
+        rows += std::string(h_row.datum.day_of_week().as_short_string()) + ";";  // Wochentag
 
         for (const auto &h_task : h_row.v_tasks)
-            rows += h_task.assignee + " | ";
+            rows += h_task.assignee + ";";
 
         rows += "\n";
     }
 
     return rows;
+}
+
+
+void C_Project::get_all_persons(std::vector<person> *v_pers)
+{
+    rc = open_db();
+
+    std::vector<person> v_tmp_pers;
+
+    std::string query = "";
+    query += "SELECT tPerson.cName, tTask.cTask, tTask.cDescription ";
+    query += "FROM tTaskAssign ";
+    query += "INNER JOIN tPerson ON tPerson.cId = tTaskAssign.cPersonId ";
+    query += "INNER JOIN tTask ON tTask.cId = tTaskAssign.cTaskId";
+
+    rc = query_db(&query);
+
+    while (true)
+    {
+        rc = step_db();
+        if(rc == SQLITE_ROW)
+        {
+            person pers;
+            pers.name             = get_text(COL_0);
+            pers.assignable_tasks = get_text(COL_2);
+
+            v_tmp_pers.push_back(pers);
+        }
+
+        if(done_or_error(rc))
+            break;
+    }
+
+    rc = close_db();
+
+
+    std::string tmp_name = "";
+    std::string tmp_assignable_tasks = "";
+    person tmp_pers;
+    for (const auto &el : v_tmp_pers)
+    {
+        if (tmp_name != el.name)
+        {
+            if (tmp_name == "")
+            {
+                tmp_name             = el.name;
+                tmp_assignable_tasks = el.assignable_tasks;
+            }
+            else
+            {
+                tmp_pers.name = tmp_name;
+                tmp_pers.assignable_tasks = tmp_assignable_tasks;
+                v_pers->push_back(tmp_pers);
+
+                tmp_name             = el.name;
+                tmp_assignable_tasks = el.assignable_tasks;
+            }
+        }
+        else
+        {
+            tmp_assignable_tasks += ", " + el.assignable_tasks;
+        }
+    }
+
+    if (tmp_name != "")
+    {
+        tmp_pers.name = tmp_name;
+        tmp_pers.assignable_tasks = tmp_assignable_tasks;
+        v_pers->push_back(tmp_pers);
+    }
+
+}
+
+
+
+
+std::string C_Project::get_free_person_for(std::string task, date datum, std::vector<person> *v_pers)
+{
+    std::string ret_val = "";
+
+    std::vector<person*> possibles;
+
+    // Check if assingee's duration has reached and release them for new assignments
+    for (auto &el_per : *v_pers)
+    {
+        if (el_per.assigned_a != "")
+        {
+            if (el_per.since_a + days(el_per.duration_a) <= datum){
+                //release them for new assignments
+                el_per.v_last_assignment.push_front(el_per.assigned_a);
+                el_per.assigned_a = "";
+                el_per.since_a = date(1400, 1, 1);
+            }
+        }
+    }
+
+    //Return already and not expired assignee
+    for (auto &el_per : *v_pers)
+        if (el_per.assigned_a == task)
+        {
+            ret_val = el_per.name;
+            break;
+        }
+
+    //Search for new assignee
+    if (ret_val == "")
+    {
+        //Search for possibilities
+        for (auto &el_per : *v_pers)
+            if ((el_per.assigned_a == "") &&
+                (el_per.assignable_tasks.find(task) != std::string::npos) &&
+                (el_per.v_last_assignment[0] != task))
+            {
+                possibles.push_back(&el_per);
+            }
+
+        if (!possibles.empty())
+        {
+            person *assigner = *select_randomly(possibles.begin(), possibles.end());
+
+            ret_val              = assigner->name;
+            assigner->assigned_a = task;
+            assigner->since_a    = datum;
+            assigner->duration_a = 7; //Tage
+        }
+        else
+            ret_val = "hmpf!";
+    }
+
+    return ret_val;
+}
+
+
+void C_Project::do_assignments(std::vector<the_plan> *plan)
+{
+    std::vector<person> v_pers;
+    get_all_persons(&v_pers);
+
+    for (const auto &el : v_pers)
+    {
+        std::cout << el.name << ": " << el.assignable_tasks << std::endl;
+    }
+
+    for (auto &row : *plan)
+        for (auto &task : row.v_tasks)
+        {
+            task.assignee = get_free_person_for(task.task, row.datum, &v_pers);
+        }
 }
