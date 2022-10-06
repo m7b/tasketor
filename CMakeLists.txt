@@ -239,7 +239,11 @@ if(UNIX AND NOT APPLE)
 
 endif()
 
-
+add_custom_command(
+        TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy
+                ${CMAKE_SOURCE_DIR}/docs/Timetable.xlsx
+                ${CMAKE_CURRENT_BINARY_DIR}/bin/Timetable.xlsx)
 
 
 
