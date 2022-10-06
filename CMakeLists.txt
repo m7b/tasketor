@@ -53,7 +53,6 @@ conan_basic_setup()
 
 ## Cmake FetchContent
 ## for ...
-##   - wxWidgets
 ##   - Boost
 INCLUDE(FetchContent)
 SET(FETCHCONTENT_QUIET OFF)
@@ -67,17 +66,6 @@ SET(GIT_PROGRESS ON)
 SET(GIT_REPOSITORY_BOOST     https://github.com/boostorg/boost.git)
 SET(GIT_TAG_BOOST            boost-1.80.0)
 INCLUDE(fetch_boost)
-##   - wxWidgets
-#SET(GIT_REPOSITORY_WXWIDGETS https://github.com/wxWidgets/wxWidgets.git)
-#SET(GIT_TAG_WXWIDGETS        v3.2.1)
-#INCLUDE(fetch_wxwidgets)
-
-
-
-
-
-
-
 
 
 
@@ -96,7 +84,6 @@ add_library(
     src/C_DbHandle.cpp
     src/C_Project.cpp
 #    ${CONAN_LIBS}
-#	${sqlite3_SOURCE_DIR}/sqlite3.c
 )
 
 
@@ -104,10 +91,7 @@ add_library(
 # add the executable
 add_executable(
     ${CMAKE_PROJECT_NAME}
-#    WIN32
     src/main.cpp
-#    res/resource.rc
-#    res/svn.rc
 )
 
 
@@ -117,9 +101,6 @@ target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC $<$<CONFIG:Debug>:-g>)
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC $<$<CONFIG:Debug>:-O0>)
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC $<$<CONFIG:Release>:-Ofast>)
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -funroll-loops)
-#target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -std=gnu++11)
-#target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -mthreads)
-#target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -pthread)
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -pipe)
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -Wall)
 
@@ -136,67 +117,8 @@ target_compile_definitions(${CMAKE_PROJECT_NAME} PUBLIC $<$<CONFIG:Debug>:wxDEBU
 
 
 
-
-# # generate CHANGELOG from *.md to *.html (on change)
-# FIND_PROGRAM(PANDOC_EXECUTABLE V:/pandoc-2.6-windows-x86_64/pandoc.exe)
-# SET(CHANGELOG_MD   ${PROJECT_SOURCE_DIR}/CHANGELOG.md)
-# SET(CHANGELOG_HTML ${CMAKE_CURRENT_BINARY_DIR}/CHANGELOG.html)
-# ADD_CUSTOM_COMMAND(
-#     OUTPUT ${CHANGELOG_HTML}
-#     COMMAND ${PANDOC_EXECUTABLE} ${CHANGELOG_MD} -o ${CHANGELOG_HTML}
-#     DEPENDS ${CHANGELOG_MD}
-# )
-# ADD_CUSTOM_TARGET(
-#     changelog
-#     DEPENDS ${CHANGELOG_HTML}
-#     COMMENT "Create changelog file (md to html)"
-# )
-# SET_PROPERTY(SOURCE res/resource.rc APPEND PROPERTY OBJECT_DEPENDS ${CHANGELOG_HTML})
-
-
-# # generate TOOLCHAIN from *.md to *.html (on change)
-# SET(TOOLCHAIN_MD   ${PROJECT_SOURCE_DIR}/TOOLCHAIN.md)
-# SET(TOOLCHAIN_HTML ${CMAKE_CURRENT_BINARY_DIR}/TOOLCHAIN.html)
-# ADD_CUSTOM_COMMAND(
-#     OUTPUT ${TOOLCHAIN_HTML}
-#     COMMAND ${PANDOC_EXECUTABLE} ${TOOLCHAIN_MD} -o ${TOOLCHAIN_HTML}
-#     DEPENDS ${TOOLCHAIN_MD}
-# )
-# ADD_CUSTOM_TARGET(
-#     toolchain
-#     DEPENDS ${TOOLCHAIN_HTML}
-#     COMMENT "Create toolchain file (md to html)"
-# )
-# SET_PROPERTY(SOURCE res/resource.rc APPEND PROPERTY OBJECT_DEPENDS ${TOOLCHAIN_HTML})
-
-
-
-
-
-
-# if(CMAKE_BUILD_TYPE STREQUAL Release)
-#     MESSAGE(STATUS "Do minimal size release stuff")
-#     FIND_PROGRAM(UPX_EXECUTABLE V:/upx-3.96-win64/upx.exe)
-#     ADD_CUSTOM_COMMAND(TARGET ${CMAKE_PROJECT_NAME} POST_BUILD
-#     COMMAND ${UPX_EXECUTABLE} $<TARGET_FILE:${CMAKE_PROJECT_NAME}>
-#     COMMENT "Running UPX packer ..."
-#     )
-# endif()
-
-
-#message("tasketor_BINARY_DIR is ${OpenChemistry_BINARY_DIR}")
-#message("OpenChemistry_DEFAULT_ARGS is ${OpenChemistry_DEFAULT_ARGS}")
-#message("OpenChemistry_THIRDPARTYLIBS_ARGS is ${OpenChemistry_THIRDPARTYLIBS_ARGS}")
-#message("OpenChemistry_INSTALL_PREFIX is ${OpenChemistry_INSTALL_PREFIX}")
-#message("sqlite3_SOURCE_DIR is ${sqlite3_SOURCE_DIR}")
-#message("spdlog_SOURCE_DIR is ${spdlog_SOURCE_DIR}")
-#message("boostorg_SOURCE_DIR is ${boostorg_SOURCE_DIR}")
-
-
-
 if(WIN32)
 # for Windows operating system in general
-
 
 	# link libraries
 	target_link_libraries(
@@ -244,8 +166,6 @@ add_custom_command(
         COMMAND ${CMAKE_COMMAND} -E copy
                 ${CMAKE_SOURCE_DIR}/docs/Timetable.xlsx
                 ${CMAKE_CURRENT_BINARY_DIR}/bin/Timetable.xlsx)
-
-
 
 
 ADD_SUBDIRECTORY(tests)
