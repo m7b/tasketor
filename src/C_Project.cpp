@@ -104,13 +104,22 @@ void C_Project::insertTestData(void)
     query = "";
     query += "INSERT INTO tEventTasks (cEventId, cTaskId) ";
     query += "VALUES ";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-A'), (SELECT cId FROM tTask WHERE cTask='Ta-A')),";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-A'), (SELECT cId FROM tTask WHERE cTask='Ta-B')),";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-A'), (SELECT cId FROM tTask WHERE cTask='Ta-C')),";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-A'), (SELECT cId FROM tTask WHERE cTask='Ta-D')),";
     query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-A'), (SELECT cId FROM tTask WHERE cTask='Ta-E')),";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-A'), (SELECT cId FROM tTask WHERE cTask='Ta-F')),";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-A'), (SELECT cId FROM tTask WHERE cTask='Ta-G')),";
     query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-B'), (SELECT cId FROM tTask WHERE cTask='Ta-A')),";
     query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-B'), (SELECT cId FROM tTask WHERE cTask='Ta-B')),";
-    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-C'), (SELECT cId FROM tTask WHERE cTask='Ta-A')),";
-    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-C'), (SELECT cId FROM tTask WHERE cTask='Ta-B')),";
-    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-C'), (SELECT cId FROM tTask WHERE cTask='Ta-C')),";
-    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-C'), (SELECT cId FROM tTask WHERE cTask='Ta-D'));";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-B'), (SELECT cId FROM tTask WHERE cTask='Ta-C')),";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-B'), (SELECT cId FROM tTask WHERE cTask='Ta-D')),";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-B'), (SELECT cId FROM tTask WHERE cTask='Ta-E')),";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-B'), (SELECT cId FROM tTask WHERE cTask='Ta-F')),";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-B'), (SELECT cId FROM tTask WHERE cTask='Ta-G')),";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-B'), (SELECT cId FROM tTask WHERE cTask='Ta-H')),";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-B'), (SELECT cId FROM tTask WHERE cTask='Ta-I'));";
 
     rc = exec_db(&query);
     std::cout << "Query: " << rc << std::endl;
@@ -187,19 +196,19 @@ void C_Project::save(void)
 
 
 //Pass a date and get the event at this date
-std::string C_Project::get_event(date d)
+std::string C_Project::get_event(date d, std::vector<std::string> *v_events)
 {
     std::string result_list = "";
     date start_date;
 
-    std::vector<res_events> v_events;
+    std::vector<res_events> events;
 
-    get_all_events(&v_events);
+    get_all_events(&events);
 
     /////////
     //Iterate over result iv event is at date
 
-    for (const auto &el : v_events)
+    for (const auto &el : events)
     {
         if (el.cPeriode == "täglich")
         {
@@ -207,6 +216,7 @@ std::string C_Project::get_event(date d)
             if (d >= start_date)
             {
                 result_list += el.cEvent + ", ";
+                v_events->push_back(el.cEvent);
             }
         }
 
@@ -220,10 +230,39 @@ std::string C_Project::get_event(date d)
                 if (pos != std::string::npos)
                 {
                     result_list += el.cEvent + ", ";
+                    v_events->push_back(el.cEvent);
                 }
             }
         }
     }
+
+    return result_list;
+}
+
+
+//Pass an event list and get the task(s) for the events
+std::string C_Project::get_task(const std::vector<std::string> *v_events, std::vector<task_assign> *v_tasks)
+{
+    std::string result_list = "";
+
+    std::vector<res_tasks> tasks;
+
+    get_all_tasks(&tasks);
+
+    for (const auto &el_ev: *v_events)
+        for (const auto &el_ta : tasks)
+            if (el_ta.cEvent == el_ev)
+            {
+                if (result_list.find(el_ta.cTask) == std::string::npos)
+                {
+                    result_list += el_ta.cTask + ", ";
+                    task_assign tmp;
+                    tmp.task = el_ta.cTask;
+                    tmp.assignee = "none";
+                    v_tasks->push_back(tmp);
+                }
+            }
+
 
     return result_list;
 }
@@ -578,4 +617,70 @@ void C_Project::get_all_events(std::vector<res_events> *v_res)
     }
 
     rc = close_db();
+}
+
+void C_Project::get_all_tasks(std::vector<res_tasks> *v_res)
+{
+    rc = open_db();
+
+    std::string query = "";
+    query += "SELECT cEvent, cTask ";
+    query += "FROM tEventTasks ";
+    query += "INNER JOIN tEvent ON tEvent.cId = tEventTasks.cEventId ";
+    query += "INNER JOIN tTask ON tTask.cId = tEventTasks.cTaskId ";
+
+    rc = query_db(&query);
+
+    while (true)
+    {
+        rc = step_db();
+        if(rc == SQLITE_ROW)
+        {
+            res_tasks res;
+            res.cEvent  = get_text(COL_0);
+            res.cTask   = get_text(COL_1);
+            v_res->push_back(res);
+        }
+
+        if(done_or_error(rc))
+            break;
+    }
+
+    rc = close_db();
+}
+
+std::string C_Project::create_header(const std::vector<the_plan> *plan)
+{
+    std::string header = "---- Header ----\nsecond line\nthird line\n\n";
+
+    header += "+------------+-----+----------\n";
+    header += "| Datum      | Tag | ";
+
+    for (const auto &h_row : *plan)
+        for (const auto &h_task : h_row.v_tasks)
+            if (header.find(h_task.task) == std::string::npos)
+                header += h_task.task + " | ";
+
+    header += "\n+------------+-----+----------";
+
+    return header;
+}
+
+std::string C_Project::create_tarows(const std::vector<the_plan> *plan)
+{
+    std::string rows = "";
+
+    for (const auto &h_row : *plan)
+    {
+        rows += "| ";
+        rows += to_iso_extended_string(h_row.datum) + " | ";                       // Datum
+        rows += std::string(h_row.datum.day_of_week().as_short_string()) + " | ";  // Wochentag
+
+        for (const auto &h_task : h_row.v_tasks)
+            rows += h_task.assignee + " | ";
+
+        rows += "\n";
+    }
+
+    return rows;
 }

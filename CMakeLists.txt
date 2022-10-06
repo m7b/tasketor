@@ -117,7 +117,7 @@ target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC $<$<CONFIG:Debug>:-g>)
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC $<$<CONFIG:Debug>:-O0>)
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC $<$<CONFIG:Release>:-Ofast>)
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -funroll-loops)
-target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -std=gnu++11)
+#target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -std=gnu++11)
 #target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -mthreads)
 #target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -pthread)
 target_compile_options(${CMAKE_PROJECT_NAME} PUBLIC -pipe)
@@ -211,7 +211,7 @@ if(WIN32)
 		-static-libgcc
 		-static-libstdc++
 		$<$<CONFIG:Release>:-s>
-	)		
+	)
 endif()
 
 if(UNIX AND NOT APPLE)

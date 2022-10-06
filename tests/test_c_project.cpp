@@ -14,5 +14,5 @@ BOOST_AUTO_TEST_CASE(PassTest)
 
     BOOST_TEST_MESSAGE("Created test DB: " << prj_file);
 
-    std::string result = test.get_event("2020-11-14");
+    //std::string result = test.get_event("2020-11-14");
 }

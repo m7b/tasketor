@@ -15,9 +15,15 @@
 
 #include <boost/locale.hpp>
 #include <boost/date_time/gregorian/gregorian.hpp>
-    using namespace boost::locale;
-    using namespace boost::gregorian;
+using namespace boost::locale;
+using namespace boost::gregorian;
 
+
+typedef struct _task_assign
+{
+    std::string task;
+    std::string assignee;
+} task_assign;
 
 typedef struct _res_events
 {
@@ -27,6 +33,19 @@ typedef struct _res_events
     std::string cPeriode;
     std::string cWeekdays;
 } res_events;
+
+typedef struct _res_tasks
+{
+    std::string cEvent;
+    std::string cTask;
+} res_tasks;
+
+typedef struct _the_plan
+{
+    date datum;
+    std::vector<std::string> v_events;
+    std::vector<task_assign> v_tasks;
+} the_plan;
 
 class C_Project : public C_DbHandle
 {
@@ -39,11 +58,17 @@ public:
     void insertTestData(void);
     void save(void);
 
-    //Pass a date and get the event at this date
-    std::string get_event(date d);
+    //Pass a date and get the event(s) at this date
+    std::string get_event(date d, std::vector<std::string> *v_events);
 
     //Pass a date and get the weekday at this date
     std::string get_weekday(date d);
+
+    //Pass an event list and get the task(s) for the events
+    std::string get_task(const std::vector<std::string> *v_events, std::vector<task_assign> *v_tasks);
+
+    std::string create_header(const std::vector<the_plan> *plan);
+    std::string create_tarows(const std::vector<the_plan> *plan);
 
 private:
 
@@ -66,6 +91,7 @@ private:
     void Create_vTaskMatrix(void);
 
     void get_all_events(std::vector<res_events> *v_res);
+    void get_all_tasks(std::vector<res_tasks> *v_res);
 };
 
 struct tTask
