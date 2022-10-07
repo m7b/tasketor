@@ -41,6 +41,7 @@ typedef struct _res_tasks
 {
     std::string cEvent;
     std::string cTask;
+    std::string cPeriode;
 } res_tasks;
 
 typedef struct _the_plan

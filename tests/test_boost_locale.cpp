@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE(PassTest)
         std::cout << std::endl;
     }
 	// vim: tabstop=4 expandtab shiftwidth=4 softtabstop=4
-	
-	
+
+
     BOOST_TEST_MESSAGE("<boost/locale.hpp> is fine!");
 }

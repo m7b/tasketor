@@ -43,28 +43,30 @@ int main()
     std::vector<std::string> v_events_at_date;
     std::vector<task_assign> v_tasks_at_date;
 
-//    std::cout << std::endl;
-//    std::cout << "Tätigkeiten vom " << to_iso_extended_string(from) << " ";
-//    std::cout << "bis " << to_iso_extended_string(to)   << ":" << std::endl;
-//    std::cout << "==========================================";
-//    std::cout << std::endl << std::endl;
-//
-//    std::cout << "+------------+-----+---------" << std::endl;
-//    std::cout << "| Datum      | Tag | Event(s)" << std::endl;
-//    std::cout << "+------------+-----+---------" << std::endl;
-//    for (date d = from; d <= to; d+=days(1))
-//    {
-//        v_events_at_date.clear();
-//        v_tasks_at_date.clear();
-//        std::cout << "| " << to_iso_extended_string(d) << " ";
-//        std::cout << "| " << d.day_of_week().as_short_string() << " | ";
-//        std::cout << test.get_event(d, &v_events_at_date) << " | ";
-//        if (!v_events_at_date.empty())
-//            std::cout << test.get_task(&v_events_at_date, &v_tasks_at_date) << std::endl;
-//        else
-//            std::cout << std::endl;
-//    }
-//    std::cout << "+------------+-----+---------" << std::endl;
+    ////////////////////////////////////////////////////////////
+    std::cout << std::endl;
+    std::cout << "Tätigkeiten vom " << to_iso_extended_string(from) << " ";
+    std::cout << "bis " << to_iso_extended_string(to)   << ":" << std::endl;
+    std::cout << "==========================================";
+    std::cout << std::endl << std::endl;
+
+    std::cout << "+------------+-----+---------" << std::endl;
+    std::cout << "| Datum      | Tag | Event(s)" << std::endl;
+    std::cout << "+------------+-----+---------" << std::endl;
+    for (date d = from; d <= to; d+=days(1))
+    {
+        v_events_at_date.clear();
+        v_tasks_at_date.clear();
+        std::cout << "| " << to_iso_extended_string(d) << " ";
+        std::cout << "| " << d.day_of_week().as_short_string() << " | ";
+        std::cout << test.get_event(d, &v_events_at_date) << " | ";
+        if (!v_events_at_date.empty())
+            std::cout << test.get_task(&v_events_at_date, &v_tasks_at_date) << std::endl;
+        else
+            std::cout << std::endl;
+    }
+    std::cout << "+------------+-----+---------" << std::endl;
+    ////////////////////////////////////////////////////////////
 
 
     // ########################################################################
@@ -82,7 +84,7 @@ int main()
             tmp.v_events = v_events_at_date;
 
             v_tasks_at_date.clear();
-            test.get_task(&v_events_at_date, &v_tasks_at_date);
+            res = test.get_task(&v_events_at_date, &v_tasks_at_date);
             tmp.v_tasks = v_tasks_at_date;
             vthe_plan.push_back(tmp);
         }

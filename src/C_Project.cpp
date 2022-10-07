@@ -59,9 +59,9 @@ void C_Project::insertTestData(void)
     query += "VALUES ";
     query += "('einmalig',      ''),";
     query += "('jedes mal',     ''),";
-    query += "('täglich',       ''),";
-    query += "('wöchentlich',   ''),";
-    query += "('2-wöchentlich', ''),";
+    query += "('tÃ¤glich',       ''),";
+    query += "('wÃ¶chentlich',   ''),";
+    query += "('2-wÃ¶chentlich', ''),";
     query += "('monatlich',     '');";
 
     rc = exec_db(&query);
@@ -70,8 +70,8 @@ void C_Project::insertTestData(void)
     query = "";
     query += "INSERT INTO tEvent (cEvent, cEventDetails, cFirstTime, cPeriodeId, cWeekdays) ";
     query += "VALUES ";
-    query += "('Ev-A', '19:15 - 21:00', '2022-10-07', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Wed'),";
-    query += "('Ev-B', '18:30 - 20:15', '2022-10-03', (SELECT cId FROM tPeriode WHERE cPeriode='wöchentlich'), 'Sat');";
+    query += "('Ev-A', '19:15 - 21:00', '2022-10-07', (SELECT cId FROM tPeriode WHERE cPeriode='wÃ¶chentlich'), 'Wed'),";
+    query += "('Ev-B', '18:30 - 20:15', '2022-10-03', (SELECT cId FROM tPeriode WHERE cPeriode='wÃ¶chentlich'), 'Sat');";
 
     rc = exec_db(&query);
     std::cout << "Query: " << rc << std::endl;
@@ -79,8 +79,8 @@ void C_Project::insertTestData(void)
     query = "";
     query += "INSERT INTO tEventReplacementPlan (cEventId, cPlan, cReplacement, cReason) ";
     query += "VALUES ";
-    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-B'), '2022-10-21', '2022-10-20', 'Außerplanmäßiger Grund'),";
-    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-C'), '2022-10-21', '2022-10-20', 'Außerplanmäßiger Grund');";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-B'), '2022-10-21', '2022-10-20', 'AuÃŸerplanmÃ¤ÃŸiger Grund'),";
+    query += "((SELECT cId FROM tEvent WHERE cEvent='Ev-C'), '2022-10-21', '2022-10-20', 'AuÃŸerplanmÃ¤ÃŸiger Grund');";
 
     rc = exec_db(&query);
     std::cout << "Query: " << rc << std::endl;
@@ -206,11 +206,11 @@ std::string C_Project::get_event(date d, std::vector<std::string> *v_events)
     get_all_events(&events);
 
     /////////
-    //Iterate over result iv event is at date
+    //Iterate over result if event is at date
 
     for (const auto &el : events)
     {
-        if (el.cPeriode == "täglich")
+        if (el.cPeriode == "tÃ¤glich")
         {
             start_date = from_string(el.cFirstTime);
             if (d >= start_date)
@@ -220,11 +220,12 @@ std::string C_Project::get_event(date d, std::vector<std::string> *v_events)
             }
         }
 
-        if (el.cPeriode == "wöchentlich")
+        if (el.cPeriode == "wÃ¶chentlich")
         {
             start_date = from_string(el.cFirstTime);
             if (d >= start_date)
             {
+                // Wochentag
                 std::string weekday = get_weekday(d);
                 int pos = el.cWeekdays.find(weekday);
                 if (pos != std::string::npos)
@@ -493,12 +494,16 @@ void C_Project::Create_vEventTasks(void)
     query += "    SELECT cEventId, ";
     query += "           cEvent, ";
     query += "           cTaskId, ";
-    query += "           cTask ";
+    query += "           cTask, ";
+    query += "           cDescription ";
+    query += "           cPeriode ";
     query += "      FROM tEventTasks ";
     query += "           INNER JOIN ";
     query += "           tEvent ON tEvent.cId = tEventTasks.cEventId ";
     query += "           INNER JOIN ";
-    query += "           tTask ON tTask.cId = tEventTasks.cTaskId; ";
+    query += "           tTask ON tTask.cId = tEventTasks.cTaskId ";
+    query += "           INNER JOIN ";
+    query += "           tPeriode ON tPeriode.cId = tTask.cPeriodeId; ";
 
     rc = exec_db(&query);
     std::cout << "vEventTasks: " << rc << std::endl;
@@ -624,10 +629,11 @@ void C_Project::get_all_tasks(std::vector<res_tasks> *v_res)
     rc = open_db();
 
     std::string query = "";
-    query += "SELECT cEvent, cTask, cDescription ";
+    query += "SELECT cEvent, cTask, tTask.cDescription, cPeriode ";
     query += "FROM tEventTasks ";
     query += "INNER JOIN tEvent ON tEvent.cId = tEventTasks.cEventId ";
     query += "INNER JOIN tTask ON tTask.cId = tEventTasks.cTaskId ";
+    query += "INNER JOIN tPeriode ON tPeriode.cId = tTask.cPeriodeId ";
 
     rc = query_db(&query);
 
@@ -637,8 +643,9 @@ void C_Project::get_all_tasks(std::vector<res_tasks> *v_res)
         if(rc == SQLITE_ROW)
         {
             res_tasks res;
-            res.cEvent  = get_text(COL_0);
-            res.cTask   = get_text(COL_2);
+            res.cEvent   = get_text(COL_0);
+            res.cTask    = get_text(COL_1);
+            res.cPeriode = get_text(COL_3);
             v_res->push_back(res);
         }
 
@@ -712,7 +719,7 @@ void C_Project::get_all_persons(std::vector<person> *v_pers)
         {
             person pers;
             pers.name             = get_text(COL_0);
-            pers.assignable_tasks = get_text(COL_2);
+            pers.assignable_tasks = get_text(COL_1);
 
             v_tmp_pers.push_back(pers);
         }
@@ -799,7 +806,8 @@ std::string C_Project::get_free_person_for(std::string task, date datum, std::ve
         for (auto &el_per : *v_pers)
             if ((el_per.assigned_a == "") &&
                 (el_per.assignable_tasks.find(task) != std::string::npos) &&
-                (el_per.v_last_assignment[0] != task))
+                (el_per.v_last_assignment[0] != task) &&
+                (el_per.v_last_assignment[1] != task))
             {
                 possibles.push_back(&el_per);
             }
@@ -811,7 +819,7 @@ std::string C_Project::get_free_person_for(std::string task, date datum, std::ve
             ret_val              = assigner->name;
             assigner->assigned_a = task;
             assigner->since_a    = datum;
-            assigner->duration_a = 7; //Tage
+            assigner->duration_a = 14; //Tage
         }
         else
             ret_val = "hmpf!";
