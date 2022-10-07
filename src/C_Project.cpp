@@ -258,7 +258,8 @@ std::string C_Project::get_task(const std::vector<std::string> *v_events, std::v
                 {
                     result_list += el_ta.cTask + ", ";
                     task_assign tmp;
-                    tmp.task = el_ta.cTask;
+                    tmp.task.cTask = el_ta.cTask;
+                    tmp.task.cPeriode = el_ta.cPeriode;
                     tmp.assignee = "none";
                     v_tasks->push_back(tmp);
                 }
@@ -665,15 +666,15 @@ std::string C_Project::create_header(const std::vector<the_plan> *plan)
 
     for (const auto &h_row : *plan)
         for (const auto &h_task : h_row.v_tasks)
-            if (header.find(h_task.task) == std::string::npos)
+            if (header.find(h_task.task.cTask) == std::string::npos)
             {
                 if (!first)
                 {
                     first = true;
-                    header += h_task.task;
+                    header += h_task.task.cTask;
                 }
                 else
-                    header += ";" + h_task.task;
+                    header += ";" + h_task.task.cTask;
             }
 
     return header;
@@ -771,7 +772,7 @@ void C_Project::get_all_persons(std::vector<person> *v_pers)
 
 
 
-std::string C_Project::get_free_person_for(std::string task, date datum, std::vector<person> *v_pers)
+std::string C_Project::get_free_person_for(res_tasks task, date datum, std::vector<person> *v_pers)
 {
     std::string ret_val = "";
 
@@ -793,7 +794,7 @@ std::string C_Project::get_free_person_for(std::string task, date datum, std::ve
 
     //Return already and not expired assignee
     for (auto &el_per : *v_pers)
-        if (el_per.assigned_a == task)
+        if (el_per.assigned_a == task.cTask)
         {
             ret_val = el_per.name;
             break;
@@ -805,9 +806,9 @@ std::string C_Project::get_free_person_for(std::string task, date datum, std::ve
         //Search for possibilities
         for (auto &el_per : *v_pers)
             if ((el_per.assigned_a == "") &&
-                (el_per.assignable_tasks.find(task) != std::string::npos) &&
-                (el_per.v_last_assignment[0] != task) &&
-                (el_per.v_last_assignment[1] != task))
+                (el_per.assignable_tasks.find(task.cTask) != std::string::npos) &&
+                (el_per.v_last_assignment[0] != task.cTask) &&
+                (el_per.v_last_assignment[1] != task.cTask))
             {
                 possibles.push_back(&el_per);
             }
@@ -817,9 +818,9 @@ std::string C_Project::get_free_person_for(std::string task, date datum, std::ve
             person *assigner = *select_randomly(possibles.begin(), possibles.end());
 
             ret_val              = assigner->name;
-            assigner->assigned_a = task;
+            assigner->assigned_a = task.cTask;
             assigner->since_a    = datum;
-            assigner->duration_a = 14; //Tage
+            assigner->duration_a = get_days_from_duration(task.cPeriode);
         }
         else
             ret_val = "hmpf!";
@@ -844,4 +845,26 @@ void C_Project::do_assignments(std::vector<the_plan> *plan)
         {
             task.assignee = get_free_person_for(task.task, row.datum, &v_pers);
         }
+}
+
+int C_Project::get_days_from_duration(std::string duration)
+{
+    int ret_val = 1;
+
+    if (duration == "täglich")
+        ret_val = 1;
+
+    if (duration == "jedes mal")
+        ret_val = 1;
+
+    if (duration == "wöchentlich")
+        ret_val = 7;
+
+    if (duration == "2-wöchentlich")
+        ret_val = 14;
+
+    if (duration == "monatlich")
+        ret_val = 30;
+
+    return ret_val;
 }

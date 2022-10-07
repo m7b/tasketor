@@ -21,13 +21,6 @@ using namespace boost::locale;
 using namespace boost::gregorian;
 
 
-typedef struct _task_assign
-{
-    std::string task;
-    std::string assignee;
-    int duration;
-} task_assign;
-
 typedef struct _res_events
 {
     std::string cEvent;
@@ -43,6 +36,13 @@ typedef struct _res_tasks
     std::string cTask;
     std::string cPeriode;
 } res_tasks;
+
+typedef struct _task_assign
+{
+    res_tasks task;
+    std::string assignee;
+    int duration;
+} task_assign;
 
 typedef struct _the_plan
 {
@@ -113,7 +113,9 @@ private:
     void get_all_tasks(std::vector<res_tasks> *v_res);
     void get_all_persons(std::vector<person> *v_pers);
 
-    std::string get_free_person_for(std::string task, date datum, std::vector<person> *v_pers);
+    std::string get_free_person_for(res_tasks task, date datum, std::vector<person> *v_pers);
+
+    int get_days_from_duration(std::string duration);
 };
 
 struct tTask
